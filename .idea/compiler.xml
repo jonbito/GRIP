@@ -6,14 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="api" />
         <module name="grip-api" />
+        <module name="api" />
+        <module name="migrations" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api" target="11" />
       <module name="domain-finder" target="8" />
       <module name="grip-api" target="11" />
+      <module name="migrations" target="1.5" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

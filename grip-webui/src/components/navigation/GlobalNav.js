@@ -3,10 +3,12 @@ import {JiraIcon} from "@atlaskit/logo";
 import React, {Component, Fragment} from "react";
 import ProfileDropdown from "./ProfileDropdown";
 import HelpDropdown from "./HelpDropdown";
-import DrawerContent from "./DrawerContent";
 import CrossIcon from '@atlaskit/icon/glyph/cross';
 import Modal, {ModalTransition} from "@atlaskit/modal-dialog";
 import SettingsDrawer from "./SettingsDrawer";
+import NotificationDrawer from "./NotificationDrawer";
+import SearchDrawer from "./SearchDrawer";
+import StarredDrawer from "./StarredDrawer";
 
 export default class extends Component {
     state = {
@@ -32,27 +34,6 @@ export default class extends Component {
     openStarredDrawer = () => this.setState({isStarredDrawerOpen: true});
     closeStarredDrawer = () => this.setState({isStarredDrawerOpen: false});
 
-    renderSettingsDrawerContent = () => (
-        <DrawerContent
-            drawerTitle="Settings drawer"
-            drawerBody="Can be controlled by passing the onSettingsClick prop"
-        />
-    );
-
-    renderNotificationDrawerContents = () => (
-        <DrawerContent
-            drawerTitle="Notification drawer"
-            drawerBody="You can toggle between a search drawer and the search modal"
-        />
-    );
-
-    renderStarredDrawerContents = () => (
-        <DrawerContent
-            drawerTitle="Starred drawer"
-            drawerBody="You can toggle between a search drawer and the search modal"
-        />
-    );
-
     render() {
         return (
             <Fragment>
@@ -62,20 +43,20 @@ export default class extends Component {
                     // starred
                     onStarredClick={this.openStarredDrawer}
                     onStarredDrawerClose={this.closeStarredDrawer}
-                    starredDrawerContents={this.renderStarredDrawerContents}
+                    starredDrawerContents={() => (<StarredDrawer />)}
                     isStarredDrawerOpen={this.state.isStarredDrawerOpen}
                     // search
                     searchTooltip="Search (/)"
                     onSearchClick={this.openSearchDrawer}
                     onSearchDrawerClose={this.closeSearchDrawer}
-                    searchDrawerContents={this.renderSearchDrawerContents}
+                    searchDrawerContents={() => (<SearchDrawer />)}
                     isSearchDrawerOpen={this.state.isSearchDrawerOpen}
                     // create
                     onCreateClick={this.openCreateModal}
                     // notifications
                     onNotificationClick={this.openNotificationDrawer}
                     onNotificationDrawerClose={this.closeNotificationDrawer}
-                    notificationDrawerContents={this.renderNotificationDrawerContents}
+                    notificationDrawerContents={() => (<NotificationDrawer />)}
                     isNotificationDrawerOpen={this.state.isNotificationDrawerOpen}
                     // help
                     helpItems={HelpDropdown}

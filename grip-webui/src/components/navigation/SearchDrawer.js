@@ -5,7 +5,7 @@ export default class extends Component {
     render() {
         return (
             <div>
-                <HeaderStyle>Notifications</HeaderStyle>
+                <HeaderStyle>Search</HeaderStyle>
 
             </div>
         );
