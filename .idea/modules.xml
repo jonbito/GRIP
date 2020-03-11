@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/grip-api/api.iml" filepath="$PROJECT_DIR$/grip-api/api.iml" />
       <module fileurl="file://$PROJECT_DIR$/grip.iml" filepath="$PROJECT_DIR$/grip.iml" />
       <module fileurl="file://$PROJECT_DIR$/grip-api/grip-api.iml" filepath="$PROJECT_DIR$/grip-api/grip-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/grip-webui/grip-webui.iml" filepath="$PROJECT_DIR$/grip-webui/grip-webui.iml" />
