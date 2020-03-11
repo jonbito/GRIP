@@ -15,7 +15,7 @@ import javax.validation.Valid;
 public class AccountController {
 
     @PostMapping("/signup")
-    public ResponseEntity signUp(@RequestBody @Valid AccountSignupBindingModel accountSignupBindingModel) {
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<String> signUp(@RequestBody @Valid AccountSignupBindingModel accountSignupBindingModel) {
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 }
