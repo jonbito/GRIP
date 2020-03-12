@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,6 +38,10 @@ public class KeycloakService {
         userRepresentation.setCredentials(Collections.singletonList(credentialRepresentation));
         Response response = keycloak.realm(realm).users().create(userRepresentation);
 
+        if(response.getStatus() == HttpStatus.CONFLICT.value()) {
+            throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
+        }
+
         if(response.getStatus() != HttpStatus.CREATED.value() || response.getLocation() == null) {
             throw new HttpException("Unable to create user in keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -52,5 +57,18 @@ public class KeycloakService {
         userResource.resetPassword(newCredential);
 
         return UUID.fromString(userId);
+    }
+
+    public void deleteUser(UUID userId) {
+        Response response = keycloak.realm(realm).users().delete(userId.toString());
+
+        if(response.getStatus() != HttpStatus.OK.value()) {
+            throw new HttpException("Unable to delete user in keycloak", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public boolean userExists(String email) {
+        List<UserRepresentation> users = keycloak.realm(realm).users().search(email);
+        return !users.isEmpty();
     }
 }
