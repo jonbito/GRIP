@@ -1,6 +1,7 @@
 package com.bishopsoft.grip.api.controller;
 
 import com.bishopsoft.grip.api.dto.AccountSignupBindingModel;
+import com.bishopsoft.grip.api.service.KeycloakService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +15,16 @@ import javax.validation.Valid;
 @RequestMapping("/account")
 public class AccountController {
 
+    private final KeycloakService keycloakService;
+
+    public AccountController(KeycloakService keycloakService) {
+        this.keycloakService = keycloakService;
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody @Valid AccountSignupBindingModel accountSignupBindingModel) {
+        keycloakService.createUser(accountSignupBindingModel.getEmail(), accountSignupBindingModel.getPassword(),
+                accountSignupBindingModel.getFirstName(), accountSignupBindingModel.getLastName());
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 }
