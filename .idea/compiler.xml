@@ -7,12 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="grip-api" />
-        <module name="api" />
         <module name="migrations" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="api" target="11" />
       <module name="domain-finder" target="8" />
       <module name="grip-api" target="11" />
       <module name="migrations" target="1.5" />
@@ -20,7 +18,6 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="api" options="-parameters" />
       <module name="grip-api" options="-parameters" />
     </option>
   </component>
