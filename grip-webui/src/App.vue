@@ -2,25 +2,33 @@
   <v-app>
 
     <v-navigation-drawer
-      v-model="drawer"
       clipped
       app
+      v-if="false"
     >
       <v-list dense>
         <v-list-item link>
           <v-list-item-action>
-            <v-icon>mdi-home</v-icon>
+            <v-icon>
+              mdi-home
+            </v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
+            <v-list-item-title>
+              Home
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link>
           <v-list-item-action>
-            <v-icon>mdi-card-account-mail</v-icon>
+            <v-icon>
+              mdi-card-account-mail
+            </v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Contact</v-list-item-title>
+            <v-list-item-title>
+              Contact
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -34,8 +42,17 @@
       color="primary"
       dark
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Application</v-toolbar-title>
+      <v-btn
+              href="/"
+              target="_blank"
+              text
+              class="mr-2"
+      >
+        <v-icon class="mr-2">mdi-home</v-icon>
+        <span>Grip</span>
+      </v-btn>
+
+        <ProjectMenu />
 
       <v-spacer></v-spacer>
 
@@ -44,7 +61,7 @@
         target="_blank"
         text
       >
-        <span>Latest Release</span>
+        <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
@@ -57,16 +74,17 @@
 
 <script>
   import HelloWorld from './components/HelloWorld';
+  import ProjectMenu from "./components/ProjectMenu";
 
   export default {
   name: 'App',
 
   components: {
     HelloWorld,
+    ProjectMenu,
   },
 
   data: () => ({
-    drawer: null,
   }),
 };
 </script>
