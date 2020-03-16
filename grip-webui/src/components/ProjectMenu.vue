@@ -18,7 +18,7 @@
 
         <v-card>
             <v-row no-gutters>
-                <v-col cols="4" style="border-right: 1px solid #ddd">
+                <v-col cols="4" style="border-right: 1px solid #ddd; min-height: 350px;">
                     <v-list>
                         <v-list-item-group>
                             <v-list-item>
@@ -49,25 +49,62 @@
                     <v-text-field
                         label="Search your projects"
                         outlined
+                        :value="searchText"
+                        @input="type"
+                        :loading="searchLoading"
+                        hide-details
                     />
-                    <v-list>
-                        <v-subheader>
-                            Frequently visited
-                        </v-subheader>
+                    <div v-if="searchText.length === 0">
+                        <div class="mt-4">
+                            <strong class="grey--text text--darken-2">Frequent projects</strong>
+                        </div>
+                        <v-list
+                                two-line
+                        >
+                            <v-list-item-group v-if="frequentProjects.length > 0">
+                                <v-list-item
+                                        v-for="(project) in frequentProjects"
+                                        :key="project.id"
+                                >
+                                    <v-list-item-icon>
+                                        <v-icon v-text="project.icon" />
+                                    </v-list-item-icon>
+                                    <v-list-item-content>
+                                        <v-list-item-title v-text="project.name" />
+                                        <v-list-item-subtitle>Software Project</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                            <div class="text-center" v-if="frequentProjectsLoading">
+                                <v-progress-circular indeterminate color="primary" />
+                            </div>
+                            <div v-if="frequentProjects.length === 0 && !frequentProjectsLoading">
+                                Projects you visit often will appear here
+                            </div>
+                        </v-list>
+                    </div>
+                    <v-list v-if="projectsSearchResults.length > 0" two-line>
                         <v-list-item-group>
                             <v-list-item
-                                v-for="(project, i) in frequentProjects"
-                                :key="i"
+                                v-for="(project) in projectsSearchResults"
+                                :key="project.id"
                             >
                                 <v-list-item-icon>
                                     <v-icon v-text="project.icon" />
                                 </v-list-item-icon>
                                 <v-list-item-content>
-                                    <v-list-item-title v-text="project.text" />
+                                    <v-list-item-title v-text="project.name" />
+                                    <v-list-item-subtitle>Software project</v-list-item-subtitle>
                                 </v-list-item-content>
                             </v-list-item>
                         </v-list-item-group>
                     </v-list>
+                    <div
+                        v-if="projectsSearchResults.length === 0 && !searchLoading && searchText.length > 0"
+                        class="mt-4"
+                    >
+                        Sorry, no projects matched your search
+                    </div>
                 </v-col>
             </v-row>
         </v-card>
@@ -77,18 +114,31 @@
 <script>
     import {createNamespacedHelpers} from 'vuex';
 
-    const { mapActions, mapState } = createNamespacedHelpers('project-menu');
+    const { mapActions, mapState } = createNamespacedHelpers('ProjectMenu');
 
     export default {
         name: "ProjectMenu",
-        computed: {
-            ...mapState({
-                frequentProjects: state => state.frequentProjects,
-            })
-        },
         data: () => ({
             shown: false
-        })
+        }),
+        computed: {
+            ...mapState({
+                searchText: state => state.searchText,
+                searchLoading: state => state.searchLoading,
+                frequentProjects: state => state.frequentProjects,
+                frequentProjectsLoading: state => state.frequentProjectsLoading,
+                projectsSearchResults: state => state.projectsSearchResults
+            })
+        },
+        methods: {
+            ...mapActions({
+                type: 'type',
+                getFrequentProjects: 'getFrequentProjects'
+            }),
+        },
+        created() {
+            this.getFrequentProjects();
+        }
     }
 </script>
 

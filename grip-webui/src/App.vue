@@ -67,20 +67,20 @@
     </v-app-bar>
 
     <v-content>
-      <HelloWorld/>
+      <v-container fluid style="max-width:1280px;margin:0 auto;">
+        <router-view />
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-  import HelloWorld from './components/HelloWorld';
   import ProjectMenu from "./components/ProjectMenu";
 
   export default {
   name: 'App',
 
   components: {
-    HelloWorld,
     ProjectMenu,
   },
 

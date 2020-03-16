@@ -3,14 +3,9 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
-import Keycloak from 'keycloak-js';
-import axios from 'axios';
-
-const keycloak = Keycloak({
-  url: 'http://localhost:8888/auth',
-  realm: 'Grip',
-  clientId: 'grip-webui'
-});
+import client from './client';
+import AppSignup from "./AppSignup";
+import keycloak from "./keycloak";
 
 Vue.config.productionTip = false;
 
@@ -18,12 +13,25 @@ keycloak.init({
   onLoad: 'login-required'
 }).success(() => {
   setAxiosHeader();
-  new Vue({
-    router,
-    store,
-    vuetify,
-    render: h => h(App)
-  }).$mount('#app')
+  if(keycloak.tokenParsed.accountCreated) {
+    new Vue({
+      router,
+      store,
+      vuetify,
+      render: h => h(App)
+    }).$mount('#app')
+  } else {
+    new Vue({
+      router,
+      store,
+      vuetify,
+      render: h => h(AppSignup)
+    }).$mount('#app')
+
+    if(router.currentRoute.path !== '/create-account') {
+      router.replace('/create-account');
+    }
+  }
 });
 
 keycloak.onTokenExpired = () => {
@@ -33,5 +41,5 @@ keycloak.onTokenExpired = () => {
 };
 
 const setAxiosHeader = () => {
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + keycloak.token;
+  client.defaults.headers.common['Authorization'] = 'Bearer ' + keycloak.token;
 };
