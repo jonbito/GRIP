@@ -6,7 +6,7 @@ const client = axios.create({
 client.interceptors.response.use(
     response => response,
     (error) => {
-        console.log(error);
+        return error;
     }
 );
 

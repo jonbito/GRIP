@@ -28,16 +28,9 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping
     public ResponseEntity<String> signUp(@RequestBody @Valid AccountSignupBindingModel accountSignupBindingModel, Principal principal) {
         accountService.createAccount(accountSignupBindingModel.getRole(), accountSignupBindingModel.getWhosUsing(), principal);
         return new ResponseEntity<String>(HttpStatus.OK);
-    }
-
-    @GetMapping("/roles")
-    public List<RoleDTO> getRoles() {
-        return Stream.of(User.Role.values())
-                .map(r -> RoleDTO.builder().text(r.getNiceText()).value(r.name()).build())
-                .collect(Collectors.toList());
     }
 }

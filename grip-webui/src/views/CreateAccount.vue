@@ -12,7 +12,6 @@
                             v-model="role"
                             hint="This will help us personalize your onboarding experience."
                             persistent-hint
-                            :loading="rolesLoading"
                     ></v-select>
 
                     <h3 class="mb-2 mt-3 black--text">Who will be using Grip?</h3>
@@ -21,7 +20,15 @@
                         <v-radio label="Just me" value="me"></v-radio>
                     </v-radio-group>
 
-                    <v-btn color="primary" block class="mt-4" @click="submit">Get Started</v-btn>
+                    <v-btn
+                            color="primary"
+                            block
+                            class="mt-4"
+                           @click="submit"
+                           :loading="loading"
+                    >
+                        Get Started
+                    </v-btn>
                 </v-card-text>
             </v-card>
         </v-col>
@@ -35,16 +42,10 @@
     export default {
         name: "CreateAccount",
         data: () => ({
-            items: [
-                {
-                    text: 'Software Developer',
-                    value: 'SOFTWARE_DEVELOPER'
-                }
-            ],
-            role: 'SOFTWARE_DEVELOPER',
+            items: ['Software Developer', 'Development Team Lead', 'Devops Engineer', 'Systems Administrator', 'Security Analyst', 'Data Analyst', 'Product Manager', 'Product Designer', 'Other'],
+            role: 'Software Developer',
             whosUsing: 'company',
             loading: false,
-            rolesLoading: false,
         }),
         computed: {
             firstName: {
@@ -61,19 +62,12 @@
                     whosUsing: this.whosUsing
                 }).then((response) => {
                     console.log(response);
+                }).catch((error) => {
+                   console.log(error);
                 }).then(() => {
                     this.loading = false;
                 })
             }
-        },
-        created() {
-            this.rolesLoading = true;
-            client.get('/account/roles').then((response) => {
-                this.items = response.data;
-                this.role = response.data[0].value;
-            }).then(() => {
-                this.rolesLoading = false;
-            })
         }
     }
 </script>

@@ -71,4 +71,11 @@ public class KeycloakService {
         List<UserRepresentation> users = keycloak.realm(realm).users().search(email);
         return !users.isEmpty();
     }
+
+    public void setUserAttribute(UUID userId, String attribute, String value) {
+        UserResource userResource = keycloak.realm(realm).users().get(userId.toString());
+        UserRepresentation userRepresentation = userResource.toRepresentation();
+        userRepresentation.singleAttribute(attribute, value);
+        userResource.update(userRepresentation);
+    }
 }

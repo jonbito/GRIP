@@ -20,6 +20,10 @@ keycloak.init({
       vuetify,
       render: h => h(App)
     }).$mount('#app')
+
+    if(router.currentRoute.path === '/create-account') {
+      router.replace('/');
+    }
   } else {
     new Vue({
       router,

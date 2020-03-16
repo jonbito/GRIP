@@ -1,5 +1,6 @@
 package com.bishopsoft.grip.api.model;
 
+import com.bishopsoft.grip.api.model.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "project")
 @Getter @Setter @NoArgsConstructor
-public class Project {
+public class Project extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
