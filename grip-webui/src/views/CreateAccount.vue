@@ -35,8 +35,13 @@
     export default {
         name: "CreateAccount",
         data: () => ({
-            items: [],
-            role: '',
+            items: [
+                {
+                    text: 'Software Developer',
+                    value: 'SOFTWARE_DEVELOPER'
+                }
+            ],
+            role: 'SOFTWARE_DEVELOPER',
             whosUsing: 'company',
             loading: false,
             rolesLoading: false,
