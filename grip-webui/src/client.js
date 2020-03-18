@@ -5,9 +5,9 @@ const client = axios.create({
 });
 client.interceptors.response.use(
     response => response,
-    (error) => {
-        return error;
-    }
+    error => {
+        return Promise.reject(error)
+    },
 );
 
 export default client;

@@ -7,7 +7,7 @@
       v-if="false"
     >
       <v-list dense>
-        <v-list-item link>
+        <v-list-item to="/">
           <v-list-item-action>
             <v-icon>
               mdi-home
@@ -43,8 +43,7 @@
       dark
     >
       <v-btn
-              href="/"
-              target="_blank"
+              to="/"
               text
               class="mr-2"
       >
@@ -75,9 +74,9 @@
 </template>
 
 <script>
-  import ProjectMenu from "./components/ProjectMenu";
+    import ProjectMenu from "./components/ProjectMenu";
 
-  export default {
+    export default {
   name: 'App',
 
   components: {
