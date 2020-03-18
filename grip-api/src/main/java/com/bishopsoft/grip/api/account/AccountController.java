@@ -22,7 +22,10 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<String> signUp(@RequestBody @Valid AccountSignupBindingModel accountSignupBindingModel, Principal principal) {
-        accountService.createAccount(accountSignupBindingModel.getRole(), accountSignupBindingModel.getWhosUsing(), principal);
+        accountService.createAccount(accountSignupBindingModel.getRole(),
+                accountSignupBindingModel.getWhosUsing(),
+                accountSignupBindingModel.getUsername(),
+                principal);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 }

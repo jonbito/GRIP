@@ -4,6 +4,7 @@ CREATE TYPE role AS ENUM (
 
 CREATE TABLE IF NOT EXISTS user_account (
     id UUID PRIMARY KEY,
+    username VARCHAR(128),
     role VARCHAR(256),
     created_at timestamp,
     updated_at timestamp
@@ -34,4 +35,4 @@ CREATE TABLE IF NOT EXISTS user_permission_project (
 );
 
 /* Sequence fixes */
--- SELECT setval('account_id_seq', 1, true);
+SELECT setval('project_id_seq', 1, true);

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -34,6 +35,14 @@ public class ProjectService {
         Project project = createProject(projectCreateBindingModel);
         createOwnerPermission(project);
         return project.getId();
+    }
+
+    public boolean hasAccess(String username, String projectKey) {
+        Optional<UserPermissionProject> userPermissionProjectOptional = userPermissionProjectRepository.findByUserUsernameIgnoreCaseAndProjectKeyIgnoreCase(username, projectKey);
+        if(userPermissionProjectOptional.isPresent()) {
+            return true;
+        }
+        throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
     }
 
     private Project createProject(ProjectCreateBindingModel projectCreateBindingModel) {

@@ -4,6 +4,7 @@ import com.bishopsoft.grip.api.infrastructure.model.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,6 +23,8 @@ public class Project extends UserDateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+
+    @ColumnTransformer(write = "UPPER(?)")
     private String key;
 
     @OneToMany(mappedBy = "project", orphanRemoval = true)

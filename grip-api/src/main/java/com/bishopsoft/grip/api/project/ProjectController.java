@@ -1,7 +1,5 @@
 package com.bishopsoft.grip.api.project;
 
-import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +26,7 @@ public class ProjectController {
 
     @GetMapping("/hasAccess")
     public boolean hasAccess(@RequestParam String username, @RequestParam String projectKey) {
-        throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+        return projectService.hasAccess(username, projectKey);
     }
 
 }

@@ -20,6 +20,7 @@ public class UserAccount extends DateAudit {
     @Id
     private UUID id;
     private String role;
+    private String username;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private Set<UserPermissionProject> userPermissionProjects = new HashSet<>();

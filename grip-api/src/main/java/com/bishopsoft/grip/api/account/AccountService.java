@@ -22,7 +22,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void createAccount(String role, String whosUsing, Principal principal) {
+    public void createAccount(String role, String whosUsing, String username, Principal principal) {
         boolean userExists = userRepository.findById(UUID.fromString(principal.getName())).isPresent();
         if(userExists) {
             throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
@@ -30,6 +30,7 @@ public class AccountService {
 
         UserAccount userAccount = new UserAccount();
         userAccount.setId(UUID.fromString(principal.getName()));
+        userAccount.setUsername(username);
         userAccount.setRole(role);
 
         userRepository.save(userAccount);
