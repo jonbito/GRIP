@@ -15,14 +15,20 @@ const routes = [
     component: BrowseProjects
   },
   {
-    path: '/projects/new',
+    path: '/-/projects/new',
     name: 'Create Project',
     component: CreateProject
   },
   {
-    path: '/404',
+    path: '/-/404',
     name: '404',
     component: NotFound
+  },
+
+
+  {
+    path: '*',
+    
   },
   {
     path: '/:userName/:projectKey',
@@ -32,7 +38,7 @@ const routes = [
       client.get('/project/hasAccess?username=' + to.params.userName + '&projectKey=' + to.params.projectKey).then(() => {
         next();
       }).catch(() => {
-        next('/404');
+        next('/-/404');
       });
     },
   },

@@ -87,3 +87,15 @@
   }),
 };
 </script>
+
+<style>
+  a {
+    text-decoration: none;
+  }
+  a.link {
+    text-decoration: none;
+  }
+  a.link:hover {
+    text-decoration: underline;
+  }
+</style>

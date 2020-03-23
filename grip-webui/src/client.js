@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const client = axios.create({
-    baseURL: 'http://localhost:7777'
+    baseURL: process.env.VUE_APP_API_BASE_URL
 });
 client.interceptors.response.use(
     response => response,

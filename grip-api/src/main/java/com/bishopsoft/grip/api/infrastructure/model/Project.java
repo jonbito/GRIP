@@ -6,10 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnTransformer;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.HashSet;
@@ -26,6 +30,18 @@ public class Project extends UserDateAudit {
 
     @ColumnTransformer(write = "UPPER(?)")
     private String key;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "lead_id")
+    private UserAccount lead;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "owner_user_id")
+    private UserAccount ownerUser;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "owner_group_id")
+    private Group ownerGroup;
 
     @OneToMany(mappedBy = "project", orphanRemoval = true)
     private Set<UserPermissionProject> userPermissions = new HashSet<>();

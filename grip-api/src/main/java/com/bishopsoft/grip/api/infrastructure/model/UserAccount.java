@@ -18,10 +18,16 @@ import java.util.UUID;
 @Getter @Setter @NoArgsConstructor
 public class UserAccount extends DateAudit {
     @Id
+    @org.hibernate.annotations.Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID id;
     private String role;
     private String username;
+    private String firstName;
+    private String lastName;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private Set<UserPermissionProject> userPermissionProjects = new HashSet<>();
+
+    @OneToMany(mappedBy = "lead", orphanRemoval = true)
+    private Set<Project> leadProjects = new HashSet<>();
 }

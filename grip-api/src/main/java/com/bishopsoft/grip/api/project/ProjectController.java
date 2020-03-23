@@ -29,4 +29,8 @@ public class ProjectController {
         return projectService.hasAccess(username, projectKey);
     }
 
+    @GetMapping("/list")
+    public ProjectListPageDTO listProjects() {
+        return projectService.listProjects();
+    }
 }
