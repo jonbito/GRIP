@@ -40,6 +40,7 @@ public class ProjectService {
 
     @Transactional
     public long create(ProjectCreateBindingModel projectCreateBindingModel) {
+        projectCreateBindingModel.setKey(projectCreateBindingModel.getKey().toUpperCase());
         UserAccount user = userRepository.findById(loggedInUser.getId()).orElseThrow(() -> new HttpException("Couldn't find user", HttpStatus.INTERNAL_SERVER_ERROR));
         Optional<UserPermissionProject> findByKey = userPermissionProjectRepository.findByUser_IdAndProjectKey(user.getId(), projectCreateBindingModel.getKey());
         if(findByKey.isPresent()) {
@@ -94,5 +95,14 @@ public class ProjectService {
         userPermissionProject.setUser(user);
 
         userPermissionProjectRepository.save(userPermissionProject);
+    }
+
+    public boolean keyExists(String key, Optional<Long> groupId) {
+        key = key.toUpperCase();
+        if(groupId.isPresent()) {
+            return projectRepository.existsByKeyAndOwnerGroup_Id(key, groupId.get());
+        }
+
+        return projectRepository.existsByKeyAndOwnerUser_Id(key, loggedInUser.getId());
     }
 }

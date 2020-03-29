@@ -18,6 +18,9 @@ services:
     image: jboss/keycloak
     volumes:
       - ./realm-export.json:/tmp/realm-export.json
+      - ./theme/:/opt/jboss/keycloak/themes/grip/
+      - ./standalone.xml:/opt/jboss/keycloak/standalone/configuration/standalone.xml
+      - ./standalone-ha.xml:/opt/jboss/keycloak/standalone/configuration/standalone-ha.xml
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres

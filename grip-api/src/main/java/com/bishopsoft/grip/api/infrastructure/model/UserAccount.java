@@ -28,6 +28,12 @@ public class UserAccount extends DateAudit {
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private Set<UserPermissionProject> userPermissionProjects = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private Set<UserPermissionGroup> userPermissionGroups = new HashSet<>();
+
     @OneToMany(mappedBy = "lead", orphanRemoval = true)
     private Set<Project> leadProjects = new HashSet<>();
+
+    @OneToMany(mappedBy = "ownerUser", orphanRemoval = true)
+    private Set<Project> projects = new HashSet<>();
 }

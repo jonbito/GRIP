@@ -5,6 +5,5 @@ public enum RoleEnum {
     REPORTER,
     DEVELOPER,
     MAINTAINER,
-    ADMIN,
     OWNER
 }

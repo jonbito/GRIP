@@ -1,6 +1,7 @@
 package com.bishopsoft.grip.api.project;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/project")
@@ -32,5 +34,10 @@ public class ProjectController {
     @GetMapping("/list")
     public ProjectListPageDTO listProjects() {
         return projectService.listProjects();
+    }
+
+    @GetMapping("/keyExists/{key}")
+    public boolean projectKeyExists(@PathVariable(value = "key") String key, @RequestParam Optional<Long> groupId) {
+        return projectService.keyExists(key, groupId);
     }
 }

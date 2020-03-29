@@ -1,5 +1,5 @@
 CREATE TYPE role_type AS ENUM (
-    'GUEST', 'REPORTER', 'DEVELOPER', 'MAINTAINER', 'ADMIN', 'OWNER'
+    'GUEST', 'REPORTER', 'DEVELOPER', 'MAINTAINER', 'OWNER'
 );
 
 CREATE TYPE upload_type AS ENUM (
@@ -81,3 +81,4 @@ CREATE TABLE IF NOT EXISTS upload (
 /* Sequence fixes */
 SELECT setval('project_id_seq', 1, true);
 SELECT setval('upload_id_seq', 1, true);
+SELECT setval('project_group_id_seq', 1, true);

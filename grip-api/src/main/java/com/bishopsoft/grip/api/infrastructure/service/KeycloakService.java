@@ -78,4 +78,11 @@ public class KeycloakService {
         userRepresentation.singleAttribute(attribute, value);
         userResource.update(userRepresentation);
     }
+
+    public void setUsername(UUID userId, String username) {
+        UserResource userResource = keycloak.realm(realm).users().get(userId.toString());
+        UserRepresentation userRepresentation = userResource.toRepresentation();
+        userRepresentation.setUsername(username);
+        userResource.update(userRepresentation);
+    }
 }

@@ -28,6 +28,10 @@ public class AccountService {
             throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
         }
 
+        if(usernameExists(username)) {
+            throw new HttpException("Username already exists", HttpStatus.BAD_REQUEST);
+        }
+
         UserAccount userAccount = new UserAccount();
         userAccount.setId(UUID.fromString(principal.getName()));
         userAccount.setUsername(username);
@@ -36,5 +40,10 @@ public class AccountService {
         userRepository.save(userAccount);
 
         keycloakService.setUserAttribute(UUID.fromString(principal.getName()), "accountCreated", "true");
+        keycloakService.setUsername(UUID.fromString(principal.getName()), username);
+    }
+
+    public boolean usernameExists(String username) {
+        return userRepository.existsUserAccountByUsername(username);
     }
 }
