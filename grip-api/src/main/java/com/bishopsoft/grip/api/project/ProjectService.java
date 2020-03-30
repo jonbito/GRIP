@@ -1,5 +1,6 @@
 package com.bishopsoft.grip.api.project;
 
+import com.bishopsoft.grip.api.infrastructure.dto.ListPageDTO;
 import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
 import com.bishopsoft.grip.api.infrastructure.model.Project;
 import com.bishopsoft.grip.api.infrastructure.model.RoleEnum;
@@ -59,8 +60,11 @@ public class ProjectService {
         throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
     }
 
-    public ProjectListPageDTO listProjects() {
-        Page<UserPermissionProject> userPermissionProjects = userPermissionProjectRepository.findByUser_Id(loggedInUser.getId(), PageRequest.of(0, 10, Sort.by("project.name").ascending()));
+    public ListPageDTO<ProjectListDTO> listProjects(String sortBy, Optional<Boolean> sortDesc, int page, int itemsPerPage, String search) {
+        Sort sort = sortBy.isBlank() ? Sort.by("project.name").ascending() : Sort.by("project." + sortBy);
+        sort = sortDesc.isPresent() && sortDesc.get() ? sort.descending() : sort.ascending();
+
+        Page<UserPermissionProject> userPermissionProjects = userPermissionProjectRepository.searchByUser(loggedInUser.getId(), search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort));
         List<ProjectListDTO> projectDtos = userPermissionProjects.getContent().stream()
                 .map(u -> {
                     ProjectListDTO dto = new ProjectListDTO();
@@ -75,7 +79,11 @@ public class ProjectService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-        return ProjectListPageDTO.builder().contents(projectDtos).total(userPermissionProjects.getTotalElements()).build();
+
+        ListPageDTO<ProjectListDTO> ret = new ListPageDTO<>();
+        ret.setContents(projectDtos);
+        ret.setTotal(userPermissionProjects.getTotalElements());
+        return ret;
     }
 
     private Project createProject(ProjectCreateBindingModel projectCreateBindingModel, UserAccount user) {
@@ -103,6 +111,6 @@ public class ProjectService {
             return projectRepository.existsByKeyAndOwnerGroup_Id(key, groupId.get());
         }
 
-        return projectRepository.existsByKeyAndOwnerUser_Id(key, loggedInUser.getId());
+        return userPermissionProjectRepository.existsByUser_IdAndProjectKey(loggedInUser.getId(), key);
     }
 }

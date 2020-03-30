@@ -5,6 +5,8 @@ import com.bishopsoft.grip.api.infrastructure.model.UserPermissionProjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,4 +17,11 @@ public interface UserPermissionProjectRepository extends JpaRepository<UserPermi
     Optional<UserPermissionProject> findByUserUsernameIgnoreCaseAndProjectKeyIgnoreCase(String username, String projectKey);
     Page<UserPermissionProject> findByUser_Id(UUID id, Pageable pageable);
     Optional<UserPermissionProject> findByUser_IdAndProjectKey(UUID id, String key);
+    boolean existsByUser_IdAndProjectKey(UUID id, String key);
+
+    @Query("select u from UserPermissionProject u where u.user.id = :id and (lower(function('replace', u.project.name, ' ', '')) like lower(concat('%', :search, '%')) or lower(u.project.key) like lower(concat('%', :search, '%')) or lower(concat(u.project.lead.firstName, u.project.lead.lastName)) like lower(concat('%', :search, '%')))")
+    Page<UserPermissionProject> searchByUser(
+            @Param(value = "id") UUID id,
+            @Param(value = "search") String search,
+            Pageable pageable);
 }

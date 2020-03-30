@@ -12,7 +12,7 @@
                     class="px-1"
             >
                 <v-avatar color="blue" size="32">
-                    <span class="white--text">JB</span>
+                    <span class="white--text">{{avatarInitials}}</span>
                 </v-avatar>
                 <v-icon>mdi-chevron-down</v-icon>
             </v-btn>
@@ -80,6 +80,11 @@
             username: {
                 get() {
                     return keycloak.tokenParsed.preferred_username
+                }
+            },
+            avatarInitials: {
+                get() {
+                    return keycloak.tokenParsed.given_name.charAt(0) + keycloak.tokenParsed.family_name.charAt(0);
                 }
             }
         },

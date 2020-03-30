@@ -1,5 +1,6 @@
 package com.bishopsoft.grip.api.project;
 
+import com.bishopsoft.grip.api.infrastructure.dto.ListPageDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +33,14 @@ public class ProjectController {
     }
 
     @GetMapping("/list")
-    public ProjectListPageDTO listProjects() {
-        return projectService.listProjects();
+    public ListPageDTO<ProjectListDTO> listProjects(
+            @RequestParam String sortBy,
+            @RequestParam Optional<Boolean> sortDesc,
+            @RequestParam int page,
+            @RequestParam int itemsPerPage,
+            @RequestParam String search
+    ) {
+        return projectService.listProjects(sortBy, sortDesc, page, itemsPerPage, search);
     }
 
     @GetMapping("/keyExists/{key}")

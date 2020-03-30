@@ -36,10 +36,6 @@ public class Project extends UserDateAudit {
     private UserAccount lead;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_user_id")
-    private UserAccount ownerUser;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_group_id")
     private Group ownerGroup;
 

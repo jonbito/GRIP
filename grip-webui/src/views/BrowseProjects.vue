@@ -4,7 +4,14 @@
             <h1>Projects</h1>
             <v-btn color="success" v-if="projects.length > 0" to="/-/projects/new">New Project</v-btn>
         </div>
-        <v-divider class="mt-3 mb-10" />
+        <v-divider class="mt-3 mb-10"/>
+        <v-text-field
+                v-model="search"
+                outlined
+                label="Search projects"
+                hide-details
+                @input="searchTypeDebounce"
+        />
         <v-data-table
                 :headers="headers"
                 :items="projects"
@@ -15,6 +22,7 @@
                 show-select
                 single-select
                 item-key="key"
+                :search="search"
         >
             <template v-slot:item.name="{ item }">
                 <router-link :to="item.url" class="mr-1">
@@ -25,12 +33,13 @@
                 <router-link :to="item.url" class="link">{{item.group}} / <strong>{{item.name}}</strong></router-link>
             </template>
             <template v-slot:item.data-table-select="{ item }">
-                <v-checkbox on-icon="mdi-star" off-icon="mdi-star-outline" v-model="item.starred" @input="starProject" />
+                <v-checkbox on-icon="mdi-star" off-icon="mdi-star-outline" v-model="item.starred" @input="starProject"/>
             </template>
             <template v-slot:item.lead="{ item }">
                 <router-link :to="'/people/' + item.leadId" class="mr-1">
-                    <v-avatar size="40px">
-                        <img :src="item.leadAvatar || '/default-avatar.png'" />
+                    <v-avatar size="40px" color="blue">
+                        <img v-if="item.leadAvatar" :src="item.leadAvatar"/>
+                        <span v-if="!item.leadAvatar" class="white--text">{{getLeadAvatarInitials(item.leadName)}}</span>
                     </v-avatar>
                 </router-link>&nbsp;
                 <router-link :to="'/people/' + item.leadId" class="link">{{ item.leadName }}</router-link>
@@ -49,51 +58,70 @@
 
 <script>
     import client from "../client";
+    import {debounce} from "lodash"
 
     export default {
-  name: 'BrowseProjects',
-  components: {
-  },
-    data: () => ({
-        headers: [
-            {
-                text: 'Name',
-                value: 'name'
+        name: 'BrowseProjects',
+        components: {},
+        data: () => ({
+            headers: [
+                {
+                    text: 'Name',
+                    value: 'name'
+                },
+                {
+                    text: 'Key',
+                    value: 'key'
+                },
+                {
+                    text: 'Lead',
+                    value: 'lead'
+                }
+            ],
+            projects: [],
+            totalProjects: 0,
+            options: {},
+            loading: false,
+            search: ''
+        }),
+        methods: {
+            starProject(val) {
+                console.log(val);
             },
-            {
-                text: 'Key',
-                value: 'key'
+            searchTypeDebounce: debounce(function() {
+                this.searchProjects();
+            }, 500),
+            getLeadAvatarInitials(name) {
+                const nameSplit = name.split(" ");
+                return nameSplit[0].charAt(0) + nameSplit[1].charAt(0);
             },
-            {
-                text: 'Lead',
-                value: 'lead'
+            searchProjects() {
+                this.loading = true;
+                const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+
+                const urlParams = new URLSearchParams();
+                urlParams.append('sortBy', sortBy);
+                urlParams.append('sortDesc', sortDesc);
+                urlParams.append('page', page);
+                urlParams.append('itemsPerPage', itemsPerPage);
+                urlParams.append('search', this.search);
+
+                client.get('/project/list?' + urlParams.toString()).then((response) => {
+                    this.projects = response.data.contents;
+                    this.totalProjects = response.data.total;
+                }).then(() => {
+                    this.loading = false;
+                })
             }
-        ],
-        projects: [],
-        totalProjects: 0,
-        options: {},
-        loading: false,
-    }),
-    methods: {
-        starProject(val) {
-            console.log(val);
         },
-    },
-    watch: {
-      options: {
-          handler() {
-              this.loading = true;
-              client.get('/project/list').then((response) => {
-                  console.log(response.data);
-                  this.projects = response.data.contents;
-                  this.totalProjects = response.data.total;
-              }).then(() => {
-                  this.loading = false;
-              })
-          }
-      }
-    },
-}
+        watch: {
+            options: {
+                handler() {
+                    this.searchProjects();
+                }
+            }
+        },
+    }
 </script>
 
 <style>

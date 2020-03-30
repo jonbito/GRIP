@@ -30,14 +30,12 @@ CREATE TABLE IF NOT EXISTS project (
     name VARCHAR(50),
     key VARCHAR(10),
     lead_id UUID NOT NULL,
-    owner_user_id UUID,
     owner_group_id INTEGER,
     created_at timestamp,
     updated_at timestamp,
     created_by UUID,
     updated_by UUID,
     FOREIGN KEY (lead_id) REFERENCES user_account (id) ON DELETE CASCADE,
-    FOREIGN KEY (owner_user_id) REFERENCES user_account (id) ON DELETE CASCADE,
     FOREIGN KEY (owner_group_id) REFERENCES project_group (id) ON DELETE CASCADE
 );
 
@@ -79,6 +77,6 @@ CREATE TABLE IF NOT EXISTS upload (
 );
 
 /* Sequence fixes */
-SELECT setval('project_id_seq', 1, true);
-SELECT setval('upload_id_seq', 1, true);
-SELECT setval('project_group_id_seq', 1, true);
+SELECT setval('project_id_seq', 100, true);
+SELECT setval('upload_id_seq', 100, true);
+SELECT setval('project_group_id_seq', 100, true);
