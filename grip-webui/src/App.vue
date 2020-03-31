@@ -57,7 +57,11 @@
 
             <v-spacer></v-spacer>
 
-            <HeaderSearchButton @click="showSearchDrawer = !showSearchDrawer" />
+            <HeaderSearchButton
+                    @click="showSearchDrawer = !showSearchDrawer"
+                    v-shortkey="['/']"
+                    @shortkey.native="showSearchDrawer = !showSearchDrawer"
+            />
             <HeaderUserMenu />
         </v-app-bar>
 

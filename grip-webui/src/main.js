@@ -15,6 +15,7 @@ Vue.config.productionTip = false;
 
 Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('ValidationProvider', ValidationProvider);
+Vue.use(require('vue-shortkey'));
 
 keycloak.init({
   onLoad: 'login-required'
