@@ -15,7 +15,6 @@ import java.util.UUID;
 @Repository
 public interface UserPermissionProjectRepository extends JpaRepository<UserPermissionProject, UserPermissionProjectId> {
     Optional<UserPermissionProject> findByUserUsernameIgnoreCaseAndProjectKeyIgnoreCase(String username, String projectKey);
-    Page<UserPermissionProject> findByUser_Id(UUID id, Pageable pageable);
     Optional<UserPermissionProject> findByUser_IdAndProjectKey(UUID id, String key);
     boolean existsByUser_IdAndProjectKey(UUID id, String key);
 

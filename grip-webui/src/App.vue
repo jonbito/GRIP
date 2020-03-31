@@ -34,6 +34,8 @@
             </v-list>
         </v-navigation-drawer>
 
+        <SearchDrawer v-model="showSearchDrawer" />
+
         <v-app-bar
                 app
                 clipped-left
@@ -55,7 +57,8 @@
 
             <v-spacer></v-spacer>
 
-            <HeaderUserMenu/>
+            <HeaderSearchButton @click="showSearchDrawer = !showSearchDrawer" />
+            <HeaderUserMenu />
         </v-app-bar>
 
         <v-content>
@@ -69,14 +72,20 @@
 <script>
     import ProjectMenu from "./components/ProjectMenu";
     import HeaderUserMenu from "./components/HeaderUserMenu";
+    import HeaderSearchButton from "./components/HeaderSearchButton";
+    import SearchDrawer from "./components/SearchDrawer";
 
     export default {
         name: 'App',
         components: {
             ProjectMenu,
-            HeaderUserMenu
+            HeaderUserMenu,
+            HeaderSearchButton,
+            SearchDrawer
         },
-        data: () => ({}),
+        data: () => ({
+            showSearchDrawer: null
+        }),
     };
 </script>
 
