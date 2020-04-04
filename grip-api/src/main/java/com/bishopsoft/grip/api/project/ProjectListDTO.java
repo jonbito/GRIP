@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ProjectListDTO {
+    private long id;
     private String name;
     private String group;
     private String url;

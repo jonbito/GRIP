@@ -4,6 +4,7 @@ import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
 import com.bishopsoft.grip.api.infrastructure.model.UserAccount;
 import com.bishopsoft.grip.api.infrastructure.repository.UserRepository;
 import com.bishopsoft.grip.api.infrastructure.service.KeycloakService;
+import javafx.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,10 @@ public class AccountService {
         userAccount.setId(UUID.fromString(principal.getName()));
         userAccount.setUsername(username);
         userAccount.setRole(role);
+
+        Pair<String, String> fullName = keycloakService.getFullName(UUID.fromString(principal.getName()));
+        userAccount.setFirstName(fullName.getKey());
+        userAccount.setLastName(fullName.getValue());
 
         userRepository.save(userAccount);
 

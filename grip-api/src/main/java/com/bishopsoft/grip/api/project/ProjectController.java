@@ -47,4 +47,9 @@ public class ProjectController {
     public boolean projectKeyExists(@PathVariable(value = "key") String key, @RequestParam Optional<Long> groupId) {
         return projectService.keyExists(key, groupId);
     }
+
+    @PostMapping("/star/{projectId}/{star}")
+    public boolean starProject(@PathVariable(value = "projectId") long projectId, @PathVariable(value = "star") boolean star) {
+        return projectService.starProject(projectId, star);
+    }
 }

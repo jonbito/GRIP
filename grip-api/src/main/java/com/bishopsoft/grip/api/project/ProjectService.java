@@ -68,13 +68,14 @@ public class ProjectService {
         List<ProjectListDTO> projectDtos = userPermissionProjects.getContent().stream()
                 .map(u -> {
                     ProjectListDTO dto = new ProjectListDTO();
+                    dto.setId(u.getProject().getId());
                     dto.setKey(u.getProject().getKey());
                     dto.setName(u.getProject().getName());
                     dto.setGroup(u.getUser().getFirstName() + " " + u.getUser().getLastName());
                     dto.setLeadId(u.getProject().getLead().getId().toString());
                     dto.setLeadName(u.getProject().getLead().getFirstName() + " " + u.getProject().getLead().getLastName());
                     dto.setUrl("/");
-                    dto.setStarred(false);
+                    dto.setStarred(u.getUser().getStarredProjects().contains(u.getProject().getId()));
                     dto.setLeadAvatar(uploadService.getUserAvatar(u.getUser().getId()));
                     return dto;
                 })
@@ -112,5 +113,25 @@ public class ProjectService {
         }
 
         return userPermissionProjectRepository.existsByUser_IdAndProjectKey(loggedInUser.getId(), key);
+    }
+
+    @Transactional
+    public boolean starProject(long projectId, boolean star) {
+        UserAccount user = userRepository.findById(loggedInUser.getId()).orElseThrow(() -> new HttpException("Couldn't find user", HttpStatus.INTERNAL_SERVER_ERROR));
+        List<Long> starredProjects = user.getStarredProjects();
+        if(star && starredProjects.contains(projectId)) {
+            return false;
+        }
+        if(!star && !starredProjects.contains(projectId)) {
+            return false;
+        }
+
+        if(star) {
+            starredProjects.add(projectId);
+        } else {
+            starredProjects.remove(projectId);
+        }
+
+        return true;
     }
 }

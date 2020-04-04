@@ -2,16 +2,29 @@
     <div>
         <div class="d-flex justify-space-between mt-3">
             <h1>Projects</h1>
-            <v-btn color="success" v-if="projects.length > 0" to="/-/projects/new">New Project</v-btn>
+            <v-btn color="success" to="/-/projects/new">New Project</v-btn>
         </div>
         <v-divider class="mt-3 mb-10"/>
-        <v-text-field
-                v-model="search"
-                outlined
-                label="Search projects"
-                hide-details
-                @input="searchTypeDebounce"
-        />
+        <v-row
+            align="end"
+        >
+            <v-col cols="8" class="pb-0">
+                <v-tabs @change="tabChanged">
+                    <v-tab>Your Projects</v-tab>
+                    <v-tab>Starred Projects</v-tab>
+                </v-tabs>
+            </v-col>
+            <v-col cols="4">
+                <v-text-field
+                        v-model="search"
+                        outlined
+                        label="Search projects"
+                        hide-details
+                        @input="searchTypeDebounce"
+                />
+            </v-col>
+        </v-row>
+        <v-divider />
         <v-data-table
                 :headers="headers"
                 :items="projects"
@@ -33,7 +46,7 @@
                 <router-link :to="item.url" class="link">{{item.group}} / <strong>{{item.name}}</strong></router-link>
             </template>
             <template v-slot:item.data-table-select="{ item }">
-                <v-checkbox on-icon="mdi-star" off-icon="mdi-star-outline" v-model="item.starred" @input="starProject"/>
+                <v-checkbox on-icon="mdi-star" off-icon="mdi-star-outline" v-model="item.starred" @change="starProject($event, item)"/>
             </template>
             <template v-slot:item.lead="{ item }">
                 <router-link :to="'/people/' + item.leadId" class="mr-1">
@@ -45,11 +58,15 @@
                 <router-link :to="'/people/' + item.leadId" class="link">{{ item.leadName }}</router-link>
             </template>
             <template v-slot:no-data>
-                <div class="text-center mt-8" v-if="projects.length === 0">
+                <div class="text-center mt-8" v-if="search.length === 0">
                     <v-icon size="128">mdi-folder</v-icon>
                     <h2 class="mb-2 black--text">You currently have no projects</h2>
                     <p class="mb-6 black--text">Let's create your first project in Grip</p>
                     <v-btn color="primary" to="/-/projects/new" class="mb-10">Create project</v-btn>
+                </div>
+                <div class="text-center mt-3" v-if="search.length > 0">
+                    <p>No projects found</p>
+                    <v-btn class="mb-5" @click="clearSearch">Clear Search</v-btn>
                 </div>
             </template>
         </v-data-table>
@@ -82,11 +99,17 @@
             totalProjects: 0,
             options: {},
             loading: false,
-            search: ''
+            projectsLoadedOnce: false,
+            search: '',
+            currentTab: 0
         }),
         methods: {
-            starProject(val) {
-                console.log(val);
+            starProject(checked, item) {
+                client.post('/project/star/' + item.id + '/' + checked).then((response) => {
+                    if(response.data === 'true') {
+                        console.log('yay');
+                    }
+                });
             },
             searchTypeDebounce: debounce(function() {
                 this.searchProjects();
@@ -111,7 +134,18 @@
                     this.totalProjects = response.data.total;
                 }).then(() => {
                     this.loading = false;
+                    this.projectsLoadedOnce = true;
                 })
+            },
+            clearSearch() {
+                this.search = "";
+                this.searchProjects();
+            },
+            tabChanged(number) {
+                if(this.currentTab !== number) {
+                    this.currentTab = number;
+                    this.searchProjects();
+                }
             }
         },
         watch: {

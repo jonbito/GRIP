@@ -5,7 +5,7 @@
             :width="450"
             :value="value"
             @input="(newVal) => $emit('input', newVal)"
-            @transitionend="$refs.search.focus()"
+            @transitionend="transition"
     >
         <v-container>
             <v-row>
@@ -31,6 +31,13 @@
 <script>
     export default {
         name: "SearchDrawer",
-        props: ['value']
+        props: ['value'],
+        methods: {
+            transition() {
+                if(this.value) {
+                    this.$refs.search.focus();
+                }
+            }
+        }
     }
 </script>

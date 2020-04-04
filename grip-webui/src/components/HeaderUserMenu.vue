@@ -22,7 +22,7 @@
             <v-list two-line>
                 <v-list-item>
                     <v-list-item-content>
-                        <v-list-item-title><strong>Jonathan Bishop</strong></v-list-item-title>
+                        <v-list-item-title><strong>{{fullName}}</strong></v-list-item-title>
                         <v-list-item-subtitle>@{{username}}</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
@@ -80,6 +80,11 @@
             username: {
                 get() {
                     return keycloak.tokenParsed.preferred_username
+                }
+            },
+            fullName: {
+                get() {
+                    return keycloak.tokenParsed.given_name + " " + keycloak.tokenParsed.family_name;
                 }
             },
             avatarInitials: {
