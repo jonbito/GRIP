@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,6 +39,9 @@ public class UserAccount extends DateAudit {
     @Type(type = "list-array")
     @Column(name = "starred_projects", columnDefinition = "integer[]")
     private List<Long> starredProjects = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private Upload avatar;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private Set<UserPermissionProject> userPermissionProjects = new HashSet<>();

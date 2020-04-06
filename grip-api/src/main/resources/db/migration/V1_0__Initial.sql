@@ -68,16 +68,21 @@ CREATE TABLE IF NOT EXISTS user_permission_project (
 );
 
 CREATE TABLE IF NOT EXISTS upload (
-    id bigserial PRIMARY KEY,
+    id UUID PRIMARY KEY,
     file_name VARCHAR(64) NOT NULL,
+    file_extension VARCHAR(64) NOT NULL,
     file_type VARCHAR(64) NOT NULL,
     upload_type upload_type NOT NULL,
-    referenced_id VARCHAR(32) NOT NULL,
+    user_account_id UUID,
+    project_id BIGINT,
+    group_id BIGINT,
     created_at timestamp,
-    updated_at timestamp
+    updated_at timestamp,
+    FOREIGN KEY (user_account_id) REFERENCES user_account (id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE,
+    FOREIGN KEY (group_id) REFERENCES project_group (id) ON DELETE CASCADE
 );
 
 /* Sequence fixes */
 SELECT setval('project_id_seq', 100, true);
-SELECT setval('upload_id_seq', 100, true);
 SELECT setval('project_group_id_seq', 100, true);

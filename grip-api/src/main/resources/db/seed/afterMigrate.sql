@@ -11,4 +11,4 @@ INSERT INTO project (id, name, key, lead_id) VALUES (1, 'Seed Project 1', 'SP1',
 INSERT INTO project (id, name, key, lead_id) VALUES (2, 'Seed Project 2', 'SP2', 'a2b05945-422f-4207-85d5-33f055e28049');
 INSERT INTO user_permission_project(user_account_id, project_id, role) VALUES ('4910035c-06cc-433f-a008-e14a4aeac146', 1, 'OWNER');
 INSERT INTO user_permission_project(user_account_id, project_id, role) VALUES ('4910035c-06cc-433f-a008-e14a4aeac146', 2, 'OWNER');
-INSERT INTO upload (id, file_name, file_type, upload_type, referenced_id) VALUES (1, 'sephiroth.png', 'image/png', 'USER_AVATAR', '1');
+INSERT INTO upload (id, file_name, file_extension, file_type, upload_type, user_account_id) VALUES ('4910035c-06cc-433f-a008-e14a4aeac573', 'sephiroth', 'jpg', 'image/jpeg', 'USER_AVATAR', '4910035c-06cc-433f-a008-e14a4aeac146');

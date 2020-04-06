@@ -1,5 +1,6 @@
 package com.bishopsoft.grip.api.project;
 
+import com.bishopsoft.grip.api.file.FileService;
 import com.bishopsoft.grip.api.infrastructure.dto.ListPageDTO;
 import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
 import com.bishopsoft.grip.api.infrastructure.model.Project;
@@ -10,7 +11,6 @@ import com.bishopsoft.grip.api.infrastructure.repository.ProjectRepository;
 import com.bishopsoft.grip.api.infrastructure.repository.UserPermissionProjectRepository;
 import com.bishopsoft.grip.api.infrastructure.repository.UserRepository;
 import com.bishopsoft.grip.api.infrastructure.security.LoggedInUser;
-import com.bishopsoft.grip.api.upload.UploadService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,14 +29,14 @@ public class ProjectService {
     private final UserPermissionProjectRepository userPermissionProjectRepository;
     private final UserRepository userRepository;
     private final LoggedInUser loggedInUser;
-    private final UploadService uploadService;
+    private final FileService fileService;
 
-    public ProjectService(ProjectRepository projectRepository, UserPermissionProjectRepository userPermissionProjectRepository, UserRepository userRepository, LoggedInUser loggedInUser, UploadService uploadService) {
+    public ProjectService(ProjectRepository projectRepository, UserPermissionProjectRepository userPermissionProjectRepository, UserRepository userRepository, LoggedInUser loggedInUser, FileService fileService) {
         this.projectRepository = projectRepository;
         this.userPermissionProjectRepository = userPermissionProjectRepository;
         this.userRepository = userRepository;
         this.loggedInUser = loggedInUser;
-        this.uploadService = uploadService;
+        this.fileService = fileService;
     }
 
     @Transactional
@@ -76,7 +76,7 @@ public class ProjectService {
                     dto.setLeadName(u.getProject().getLead().getFirstName() + " " + u.getProject().getLead().getLastName());
                     dto.setUrl("/");
                     dto.setStarred(u.getUser().getStarredProjects().contains(u.getProject().getId()));
-                    dto.setLeadAvatar(uploadService.getUserAvatar(u.getUser().getId()));
+                    dto.setLeadAvatar(null);
                     return dto;
                 })
                 .collect(Collectors.toList());

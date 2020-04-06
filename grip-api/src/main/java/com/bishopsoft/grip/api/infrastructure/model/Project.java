@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +39,9 @@ public class Project extends UserDateAudit {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_group_id")
     private Group ownerGroup;
+
+    @OneToOne(mappedBy = "project")
+    private Upload avatar;
 
     @OneToMany(mappedBy = "project", orphanRemoval = true)
     private Set<UserPermissionProject> userPermissions = new HashSet<>();

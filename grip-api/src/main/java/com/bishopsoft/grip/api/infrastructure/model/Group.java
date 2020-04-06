@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +29,9 @@ public class Group extends DateAudit {
 
     @OneToMany(mappedBy = "ownerGroup", orphanRemoval = true)
     private Set<Project> projects = new HashSet<>();
+
+    @OneToOne(mappedBy = "group")
+    private Upload avatar;
 
     @OneToMany(mappedBy = "group", orphanRemoval = true)
     private Set<UserPermissionGroup> userPermissions = new HashSet<>();
