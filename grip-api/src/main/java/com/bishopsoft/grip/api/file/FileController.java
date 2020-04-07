@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.Consumes;
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -41,7 +42,7 @@ public class FileController {
 
     @PostMapping
     @Consumes(MediaType.MULTIPART_FORM_DATA_VALUE)
-    public UUID upload(FileUploadBindingModel fileUpload) {
+    public UUID upload(FileUploadBindingModel fileUpload) throws IOException {
         return fileService.upload(fileUpload.getFile(), fileUpload.getType(), fileUpload.getProjectId(), fileUpload.getGroupId());
     }
 }

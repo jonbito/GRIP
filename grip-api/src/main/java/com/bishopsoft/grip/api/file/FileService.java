@@ -60,36 +60,39 @@ public class FileService {
     }
 
     @Transactional
-    public UUID upload(MultipartFile file, UploadTypeEnum uploadType, Optional<Long> projectId, Optional<Long> groupId) {
-        Upload upload = new Upload();
-        upload.setUploadType(uploadType);
-        upload.setFileType(file.getContentType());
-        upload.setFileName(FilenameUtils.getBaseName(file.getOriginalFilename()));
-        upload.setFileExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
-
+    public UUID upload(MultipartFile file, UploadTypeEnum uploadType, Optional<Long> projectId, Optional<Long> groupId) throws IOException {
+        Upload upload;
         switch (uploadType) {
             case USER_AVATAR:
-                // no permissions required except being logged in
                 UserAccount user = entityManager.getReference(UserAccount.class, loggedInUser.getId());
+                upload = Optional.of(user.getAvatar()).orElse(new Upload());
                 upload.setUser(user);
                 break;
             case PROJECT_AVATAR:
                 projectId.orElseThrow(() -> new HttpException("Project Id required", HttpStatus.BAD_REQUEST));
                 permissionService.assertProjectRoleForLoggedInUser(projectId.get(), RoleEnum.MAINTAINER);
                 Project project = entityManager.getReference(Project.class, projectId.get());
+                upload = Optional.of(project.getAvatar()).orElse(new Upload());
                 upload.setProject(project);
                 break;
             case GROUP_AVATAR:
                 groupId.orElseThrow(() -> new HttpException("Group Id required", HttpStatus.BAD_REQUEST));
                 permissionService.assertGroupRoleForLoggedInUser(groupId.get(), RoleEnum.OWNER);
                 Group group = entityManager.getReference(Group.class, groupId.get());
+                upload = Optional.of(group.getAvatar()).orElse(new Upload());
                 upload.setGroup(group);
                 break;
             default:
                 throw new HttpException("Upload type doesn't exist", HttpStatus.BAD_REQUEST);
         }
 
+        upload.setUploadType(uploadType);
+        upload.setFileType(file.getContentType());
+        upload.setFileName(FilenameUtils.getBaseName(file.getOriginalFilename()));
+        upload.setFileExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
         uploadRepository.save(upload);
+
+        firebaseService.uploadToStorage(upload.getId().toString() + "." + upload.getFileExtension(), file.getInputStream());
 
         return upload.getId();
     }
@@ -97,13 +100,15 @@ public class FileService {
     private void checkPermissionsOnExisting(Upload upload) {
         switch (upload.getUploadType()) {
             case USER_AVATAR:
-                if(!uploadRepository.existsByUser_Id(loggedInUser.getId())) {
+                if(upload.getUser().getId() != loggedInUser.getId()) {
                     throw new HttpException("Not Authorized", HttpStatus.UNAUTHORIZED);
                 }
                 break;
             case GROUP_AVATAR:
+                permissionService.assertGroupRoleForLoggedInUser(upload.getGroup().getId(), RoleEnum.OWNER);
                 break;
             case PROJECT_AVATAR:
+                permissionService.assertProjectRoleForLoggedInUser(upload.getProject().getId(), RoleEnum.MAINTAINER);
                 break;
             default:
                 throw new HttpException("Upload type doesn't exist", HttpStatus.BAD_REQUEST);
