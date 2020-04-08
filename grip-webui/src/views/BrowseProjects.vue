@@ -58,11 +58,14 @@
                 <router-link :to="'/people/' + item.leadId" class="link">{{ item.leadName }}</router-link>
             </template>
             <template v-slot:no-data>
-                <div class="text-center mt-8" v-if="search.length === 0">
+                <div class="text-center mt-8" v-if="search.length === 0 && currentTab === 0">
                     <v-icon size="128">mdi-folder</v-icon>
                     <h2 class="mb-2 black--text">You currently have no projects</h2>
                     <p class="mb-6 black--text">Let's create your first project in Grip</p>
                     <v-btn color="primary" to="/-/projects/new" class="mb-10">Create project</v-btn>
+                </div>
+                <div class="text-center mt-3" v-if="search.length === 0 && currentTab === 1">
+                    <p>No projects found</p>
                 </div>
                 <div class="text-center mt-3" v-if="search.length > 0">
                     <p>No projects found</p>
@@ -105,11 +108,17 @@
         }),
         methods: {
             starProject(checked, item) {
-                client.post('/project/star/' + item.id + '/' + checked).then((response) => {
-                    if(response.data === 'true') {
-                        console.log('yay');
-                    }
+                client.post('/project/star/' + item.id + '/' + checked).then(() => {
                 });
+
+                if(!checked && this.currentTab === 1) {
+                    this.projects.forEach((p, i) => {
+                        if(p.id === item.id) {
+                            this.projects.splice(i, 1);
+                            --this.totalProjects;
+                        }
+                    });
+                }
             },
             searchTypeDebounce: debounce(function() {
                 this.searchProjects();
@@ -128,6 +137,7 @@
                 urlParams.append('page', page);
                 urlParams.append('itemsPerPage', itemsPerPage);
                 urlParams.append('search', this.search);
+                urlParams.append('starred', (this.currentTab === 1).toString());
 
                 client.get('/project/list?' + urlParams.toString()).then((response) => {
                     this.projects = response.data.contents;

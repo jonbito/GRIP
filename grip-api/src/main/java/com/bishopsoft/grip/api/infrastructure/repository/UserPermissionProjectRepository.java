@@ -25,4 +25,11 @@ public interface UserPermissionProjectRepository extends JpaRepository<UserPermi
             @Param(value = "id") UUID id,
             @Param(value = "search") String search,
             Pageable pageable);
+
+    @EntityGraph(attributePaths = {"user", "project"})
+    @Query("select u from UserPermissionProject u where u.user.id = :id and u.project.id = function('ANY', u.user.starredProjects) and (lower(function('replace', u.project.name, ' ', '')) like lower(concat('%', :search, '%')) or lower(u.project.key) like lower(concat('%', :search, '%')) or lower(concat(u.project.lead.firstName, u.project.lead.lastName)) like lower(concat('%', :search, '%')))")
+    Page<UserPermissionProject> searchByUserAndStarred(
+            @Param(value = "id") UUID id,
+            @Param(value = "search") String search,
+            Pageable pageable);
 }

@@ -38,9 +38,10 @@ public class ProjectController {
             @RequestParam Optional<Boolean> sortDesc,
             @RequestParam int page,
             @RequestParam int itemsPerPage,
-            @RequestParam String search
+            @RequestParam String search,
+            @RequestParam boolean starred
     ) {
-        return projectService.listProjects(sortBy, sortDesc, page, itemsPerPage, search);
+        return projectService.listProjects(sortBy, sortDesc, page, itemsPerPage, search, starred);
     }
 
     @GetMapping("/keyExists/{key}")

@@ -44,7 +44,7 @@ public class ProjectService {
         projectCreateBindingModel.setKey(projectCreateBindingModel.getKey().toUpperCase());
         UserAccount user = userRepository.findById(loggedInUser.getId()).orElseThrow(() -> new HttpException("Couldn't find user", HttpStatus.INTERNAL_SERVER_ERROR));
         Optional<UserPermissionProject> findByKey = userPermissionProjectRepository.findByUser_IdAndProjectKey(user.getId(), projectCreateBindingModel.getKey());
-        if(findByKey.isPresent()) {
+        if (findByKey.isPresent()) {
             throw new HttpException("Project key already exists", HttpStatus.BAD_REQUEST);
         }
         Project project = createProject(projectCreateBindingModel, user);
@@ -54,17 +54,20 @@ public class ProjectService {
 
     public boolean hasAccess(String username, String projectKey) {
         Optional<UserPermissionProject> userPermissionProjectOptional = userPermissionProjectRepository.findByUserUsernameIgnoreCaseAndProjectKeyIgnoreCase(username, projectKey);
-        if(userPermissionProjectOptional.isPresent()) {
+        if (userPermissionProjectOptional.isPresent()) {
             return true;
         }
         throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
     }
 
-    public ListPageDTO<ProjectListDTO> listProjects(String sortBy, Optional<Boolean> sortDesc, int page, int itemsPerPage, String search) {
+    public ListPageDTO<ProjectListDTO> listProjects(String sortBy, Optional<Boolean> sortDesc, int page, int itemsPerPage, String search, boolean starred) {
         Sort sort = sortBy.isBlank() ? Sort.by("project.name").ascending() : Sort.by("project." + sortBy);
         sort = sortDesc.isPresent() && sortDesc.get() ? sort.descending() : sort.ascending();
 
-        Page<UserPermissionProject> userPermissionProjects = userPermissionProjectRepository.searchByUser(loggedInUser.getId(), search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort));
+        Page<UserPermissionProject> userPermissionProjects = starred ?
+                userPermissionProjectRepository.searchByUserAndStarred(loggedInUser.getId(), search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort))
+                : userPermissionProjectRepository.searchByUser(loggedInUser.getId(), search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort));
+
         List<ProjectListDTO> projectDtos = userPermissionProjects.getContent().stream()
                 .map(u -> {
                     ProjectListDTO dto = new ProjectListDTO();
@@ -108,7 +111,7 @@ public class ProjectService {
 
     public boolean keyExists(String key, Optional<Long> groupId) {
         key = key.toUpperCase();
-        if(groupId.isPresent()) {
+        if (groupId.isPresent()) {
             return projectRepository.existsByKeyAndOwnerGroup_Id(key, groupId.get());
         }
 
@@ -119,14 +122,14 @@ public class ProjectService {
     public boolean starProject(long projectId, boolean star) {
         UserAccount user = userRepository.findById(loggedInUser.getId()).orElseThrow(() -> new HttpException("Couldn't find user", HttpStatus.INTERNAL_SERVER_ERROR));
         List<Long> starredProjects = user.getStarredProjects();
-        if(star && starredProjects.contains(projectId)) {
+        if (star && starredProjects.contains(projectId)) {
             return false;
         }
-        if(!star && !starredProjects.contains(projectId)) {
+        if (!star && !starredProjects.contains(projectId)) {
             return false;
         }
 
-        if(star) {
+        if (star) {
             starredProjects.add(projectId);
         } else {
             starredProjects.remove(projectId);
