@@ -24,18 +24,12 @@ const routes = [
     name: '404',
     component: NotFound
   },
-
-
   {
-    path: '*',
-    
-  },
-  {
-    path: '/:userName/:projectKey',
+    path: '/:username/:projectKey',
     name: 'Project',
     component: Project,
     beforeEnter: (to, from, next) => {
-      client.get('/project/hasAccess?username=' + to.params.userName + '&projectKey=' + to.params.projectKey).then(() => {
+      client.get('/project/hasAccess?username=' + to.params.username + '&projectKey=' + to.params.projectKey).then(() => {
         next();
       }).catch(() => {
         next('/-/404');

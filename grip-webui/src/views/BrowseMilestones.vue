@@ -1,44 +1,38 @@
 <template>
     <div>
         <div class="d-flex justify-space-between mt-3">
-            <h1>Projects</h1>
-            <v-btn color="success" to="/-/projects/new">New Project</v-btn>
+            <h1>Milestones</h1>
+            <v-btn color="success" to="/-/milestones/new">New Milestone</v-btn>
         </div>
         <v-divider class="mt-3 mb-10"/>
         <v-row
             align="end"
         >
             <v-col cols="8" class="pb-0">
-                <v-tabs v-model="currentTab" class="project-tabs">
-                    <v-tab>Your Projects</v-tab>
-                    <v-tab>Starred Projects</v-tab>
+                <v-tabs @change="tabChanged">
+                    <v-tab>Open</v-tab>
+                    <v-tab>Closed</v-tab>
+                    <v-tab>All</v-tab>
                 </v-tabs>
             </v-col>
             <v-col cols="4">
                 <v-text-field
                         v-model="search"
                         outlined
-                        dense
+                        label="Search milestones"
                         hide-details
-                        @input="searchProjects"
-                        clearable
-                >
-                    <template v-slot:append v-if="!search">
-                        <v-icon>mdi-magnify</v-icon>
-                    </template>
-                </v-text-field>
+                        @input="searchTypeDebounce"
+                />
             </v-col>
         </v-row>
         <v-divider />
         <v-data-table
                 :headers="headers"
-                :items="projects"
+                :items="milestones"
                 :options.sync="options"
-                :server-items-length="totalProjects"
+                :server-items-length="totalMilestones"
                 :loading="loading"
                 class="elevation-1 project-table"
-                show-select
-                single-select
                 item-key="key"
                 :search="search"
         >
@@ -50,9 +44,6 @@
                 </router-link>&nbsp;
                 <router-link :to="item.url" class="link">{{item.group}} / <strong>{{item.name}}</strong></router-link>
             </template>
-            <template v-slot:item.data-table-select="{ item }">
-                <v-checkbox on-icon="mdi-star" off-icon="mdi-star-outline" v-model="item.starred" @change="starProject($event, item)"/>
-            </template>
             <template v-slot:item.lead="{ item }">
                 <router-link :to="'/people/' + item.leadId" class="mr-1">
                     <v-avatar size="40px" color="blue">
@@ -63,16 +54,16 @@
                 <router-link :to="'/people/' + item.leadId" class="link">{{ item.leadName }}</router-link>
             </template>
             <template v-slot:no-data>
-                <div class="text-center mt-8" v-if="!search && currentTab === 0">
+                <div class="text-center mt-8" v-if="search.length === 0 && currentTab === 0">
                     <v-icon size="128">mdi-folder</v-icon>
                     <h2 class="mb-2 black--text">You currently have no projects</h2>
                     <p class="mb-6 black--text">Let's create your first project in Grip</p>
                     <v-btn color="primary" to="/-/projects/new" class="mb-10">Create project</v-btn>
                 </div>
-                <div class="text-center mt-3" v-if="!search && currentTab === 1">
+                <div class="text-center mt-3" v-if="search.length === 0 && currentTab === 1">
                     <p>No projects found</p>
                 </div>
-                <div class="text-center mt-3" v-if="search">
+                <div class="text-center mt-3" v-if="search.length > 0">
                     <p>No projects found</p>
                     <v-btn class="mb-5" @click="clearSearch">Clear Search</v-btn>
                 </div>
@@ -125,11 +116,15 @@
                     });
                 }
             },
+            searchTypeDebounce: debounce(function() {
+                this.searchProjects();
+            }, 500),
+            getLeadAvatarInitials(name) {
+                const nameSplit = name.split(" ");
+                return nameSplit[0].charAt(0) + nameSplit[1].charAt(0);
+            },
             searchProjects() {
                 this.loading = true;
-                this.searchTypeDebounce();
-            },
-            searchTypeDebounce: debounce(function() {
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
 
                 const urlParams = new URLSearchParams();
@@ -137,7 +132,7 @@
                 urlParams.append('sortDesc', sortDesc);
                 urlParams.append('page', page);
                 urlParams.append('itemsPerPage', itemsPerPage);
-                urlParams.append('search', this.search ? this.search : '');
+                urlParams.append('search', this.search);
                 urlParams.append('starred', (this.currentTab === 1).toString());
 
                 client.get('/project/list?' + urlParams.toString()).then((response) => {
@@ -147,14 +142,16 @@
                     this.loading = false;
                     this.projectsLoadedOnce = true;
                 })
-            }, 500),
-            getLeadAvatarInitials(name) {
-                const nameSplit = name.split(" ");
-                return nameSplit[0].charAt(0) + nameSplit[1].charAt(0);
             },
             clearSearch() {
                 this.search = "";
                 this.searchProjects();
+            },
+            tabChanged(number) {
+                if(this.currentTab !== number) {
+                    this.currentTab = number;
+                    this.searchProjects();
+                }
             }
         },
         watch: {
@@ -162,19 +159,13 @@
                 handler() {
                     this.searchProjects();
                 }
-            },
-            currentTab: function(val) {
-                this.$router.push('/' + (val === 1 ? '?starred=true' : '')).catch(() => {});
-            },
-            '$route.query.starred': function(val) {
-                this.currentTab = val ? 1 : 0;
-                this.searchProjects();
             }
         },
-        created() {
-            if(this.$route.query.starred) {
-                this.currentTab = 1;
-            }
-        }
     }
 </script>
+
+<style>
+    .project-table tbody tr:hover {
+        background: none !important;
+    }
+</style>

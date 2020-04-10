@@ -20,29 +20,20 @@
             <v-row no-gutters>
                 <v-col cols="4" style="border-right: 1px solid #ddd; min-height: 350px;">
                     <v-list>
-                        <v-list-item-group>
-                            <v-list-item>
+                            <v-list-item @click="goto('/')">
                                 <v-list-item-content>
                                     <v-list-item-title>
                                         Your projects
                                     </v-list-item-title>
                                 </v-list-item-content>
                             </v-list-item>
-                            <v-list-item>
+                            <v-list-item @click="goto('/?starred=true')">
                                 <v-list-item-content>
                                     <v-list-item-title>
                                         Starred projects
                                     </v-list-item-title>
                                 </v-list-item-content>
                             </v-list-item>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-title>
-                                        Explore projects
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list-item-group>
                     </v-list>
                 </v-col>
                 <v-col cols="8" class="pa-4">
@@ -135,6 +126,10 @@
                 type: 'type',
                 getFrequentProjects: 'getFrequentProjects'
             }),
+            goto(path) {
+                this.shown = false;
+                this.$router.push(path);
+            }
         },
         created() {
             this.getFrequentProjects();

@@ -1,38 +1,7 @@
 <template>
     <v-app>
 
-        <v-navigation-drawer
-                clipped
-                app
-                v-if="false"
-        >
-            <v-list dense>
-                <v-list-item to="/">
-                    <v-list-item-action>
-                        <v-icon>
-                            mdi-home
-                        </v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            Home
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item link>
-                    <v-list-item-action>
-                        <v-icon>
-                            mdi-card-account-mail
-                        </v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            Contact
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-navigation-drawer>
+        <ProjectNavigationDrawer />
 
         <SearchDrawer v-model="showSearchDrawer" />
 
@@ -48,9 +17,10 @@
                     to="/"
                     text
                     class="mr-2"
+                    active-class="no-active"
+                    icon
             >
-                <v-icon class="mr-2">mdi-home</v-icon>
-                <span>Grip</span>
+                <v-icon>mdi-home</v-icon>
             </v-btn>
 
             <ProjectMenu/>
@@ -75,6 +45,7 @@
 
 <script>
     import ProjectMenu from "./components/ProjectMenu";
+    import ProjectNavigationDrawer from "./components/ProjectNavigationDrawer";
     import HeaderUserMenu from "./components/HeaderUserMenu";
     import HeaderSearchButton from "./components/HeaderSearchButton";
     import SearchDrawer from "./components/SearchDrawer";
@@ -83,6 +54,7 @@
         name: 'App',
         components: {
             ProjectMenu,
+            ProjectNavigationDrawer,
             HeaderUserMenu,
             HeaderSearchButton,
             SearchDrawer
@@ -93,7 +65,7 @@
     };
 </script>
 
-<style>
+<style lang="scss">
     a {
         text-decoration: none;
     }
@@ -108,5 +80,24 @@
 
     .v-btn-plain:before {
         display: none !important;
+    }
+    .v-btn {
+        text-transform: none;
+    }
+    .v-tab {
+        letter-spacing: .05em;
+        text-transform: none;
+        justify-content: flex-start;
+    }
+    .theme--light.v-data-table {
+        th.sortable:hover {
+            background: #f5f5f5;
+        }
+        tbody tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+            background:#fcfcfc !important;
+        }
+    }
+    .v-btn--active.no-active::before {
+        opacity: 0 !important;
     }
 </style>

@@ -1,110 +1,106 @@
 <template>
-    <v-row>
-        <v-col cols="12" md="3">
-            <h2>A Project</h2>
-        </v-col>
-        <v-col cols="12" md="9">
-            <v-card>
-                <v-card-text>
-                    <v-form
-                            v-model="formValid"
-                            lazy-validation
-                            ref="form"
-                            @submit.prevent="submit"
+    <div>
+        <ProjectBreadcrumbs :items="items" />
+        <div class="pl-6">
+            <h1>Backlog</h1>
+            <v-row>
+                <v-col cols="12" md="3">
+                    <v-text-field
+                            dense
+                            outlined
+                            clearable
+                            v-model="search"
                     >
-                        <v-col cols="12" md="6" class="pa-0">
-                            <h3 class="mb-2">Name <span class="red--text">*</span></h3>
-                            <v-text-field
-                                    placeholder="Enter a project name"
-                                    outlined
-                                    dense
-                                    maxlength="50"
-                                    v-model="name"
-                                    :rules="nameRules"
-                                    autofocus
-                            />
-                        </v-col>
-                        <v-col cols="6" md="3" class="pa-0">
-                            <h3 class="mb-2">Key <span class="red--text">*</span></h3>
-                            <v-text-field
-                                    outlined
-                                    dense
-                                    v-model="keyComputed"
-                                    maxlength="10"
-                                    :rules="keyRules"
-                            >
-                                <template v-slot:append-outer>
-                                    <v-tooltip right max-width="350">
-                                        <template v-slot:activator="{ on }">
-                                            <v-icon v-on="on" color="primary">mdi-information</v-icon>
-                                        </template>
-                                        <span>
-                                            The project key is used as the prefix of your project's issue keys (e.g. 'TEST-100'). Choose one that is descriptive and easy to type.
-                                        </span>
-                                    </v-tooltip>
-                                </template>
-                            </v-text-field>
-                        </v-col>
-                        <v-btn
-                                color="primary"
-                                class="mt-2"
-                                type="submit"
-                                :loading="loading"
-                        >
-                            Create project
-                        </v-btn>
-                    </v-form>
-                </v-card-text>
+                        <template v-slot:append v-if="!search">
+                            <v-icon>mdi-magnify</v-icon>
+                        </template>
+                    </v-text-field>
+                </v-col>
+            </v-row>
+
+            <h3 class="mb-3">Milestone 1</h3>
+            <v-card v-if="list1.length === 0" outlined class="d-flex justify-center pa-2 text-center grey--text" style="border: 2px dashed #ccc;">
+                Plan a milestone by dragging issues here.
             </v-card>
-        </v-col>
-    </v-row>
+            <draggable empty-insert-threshold="100" :list="list1" group="issues">
+                <v-card v-for="(element, index) in list1" :key="element.name" outlined class="d-flex justify-space-between pa-2 issue-card">
+                    <div>{{element.name}}</div>
+                    <div>{{index}}</div>
+                </v-card>
+            </draggable>
+            <v-btn class="mt-1 grey--text text--darken-1" text>+ Create issue</v-btn>
+
+
+
+            <h3 class="mt-6 mb-3">Backlog</h3>
+            <v-card v-if="list2.length === 0" outlined class="d-flex justify-center pa-2 text-center grey--text" style="border: 2px dashed #ccc;">
+                Your backlog is empty
+            </v-card>
+            <draggable empty-insert-threshold="100" :list="list2" group="issues">
+                <v-card v-for="(element, index) in list2" :key="element.name" outlined class="d-flex justify-space-between pa-2 issue-card">
+                    <div>{{element.name}}</div>
+                    <div>{{index}}</div>
+                </v-card>
+            </draggable>
+            <v-btn class="mt-1 grey--text text--darken-1" text>+ Create issue</v-btn>
+        </div>
+    </div>
 </template>
 
 <script>
-    import client from "../client";
+    import ProjectBreadcrumbs from "../components/ProjectBreadcrumbs";
+    import draggable from 'vuedraggable';
 
     export default {
-  name: 'Home',
-  components: {
-  },
-    data: () => ({
-        formValid: false,
-        key: '',
-        keyRules: [
-            v => !!v || 'Project key is required',
-            v => (v && !Number.isInteger(+v.charAt(0))) || 'Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters',
-            v => (v && RegExp(/^[a-zA-Z0-9]+$/).test(v)) || 'Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters',
-        ],
-        name: '',
-        nameRules: [
-            v => !!v || 'Project name is required'
-        ],
-        loading: false,
-    }),
-    computed: {
-      keyComputed: {
-          get() {
-              return this.key;
-          },
-          set(value) {
-              this.key = value.toUpperCase();
-          }
-      }
-    },
-    methods: {
-      submit() {
-          if(!this.$refs.form.validate()) return;
-
-          this.loading = true;
-          client.post('/project/create', {
-              key: this.key,
-              name: this.name
-          }).then((response) => {
-              console.log(response);
-          }).then(() => {
-              this.loading = false;
-          })
-      }
+        name: 'Project',
+        components: {
+            ProjectBreadcrumbs,
+            draggable
+        },
+        data: () => ({
+            items: [
+                {
+                    text: 'Jonathan Bishop',
+                    to: '/asdf',
+                },
+                {
+                    text: 'Grip',
+                    to: '/asdf/SP2',
+                }
+            ],
+            list1: [
+                { name: "John", id: 1 },
+                { name: "Joao", id: 2 },
+                { name: "Jean", id: 3 },
+                { name: "Gerard", id: 4 }
+            ],
+            list2: [
+                { name: "Juan", id: 5 },
+                { name: "Edgard", id: 6 },
+                { name: "Johnson", id: 7 }
+            ],
+            search: '',
+        })
     }
-}
+
 </script>
+
+<style lang="scss">
+    .issue-card {
+        border-radius: 0 !important;
+        &:hover {
+            background: #eee;
+            cursor: move;
+        }
+    }
+    .issue-card-ghost {
+        visibility: hidden;
+        opacity: 0;
+    }
+    .sortable-ghost {
+        opacity: 0;
+    }
+    .flip-list-move {
+        transition: transform 0.5s;
+    }
+</style>

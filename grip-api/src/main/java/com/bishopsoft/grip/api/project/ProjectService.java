@@ -77,7 +77,7 @@ public class ProjectService {
                     dto.setGroup(u.getUser().getFirstName() + " " + u.getUser().getLastName());
                     dto.setLeadId(u.getProject().getLead().getId().toString());
                     dto.setLeadName(u.getProject().getLead().getFirstName() + " " + u.getProject().getLead().getLastName());
-                    dto.setUrl("/");
+                    dto.setUrl("/" + u.getUser().getUsername() + "/" + u.getProject().getKey());
                     dto.setStarred(u.getUser().getStarredProjects().contains(u.getProject().getId()));
                     dto.setLeadAvatar(null);
                     return dto;
