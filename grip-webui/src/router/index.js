@@ -28,9 +28,13 @@ const routes = [
     path: '/:username/:projectKey',
     name: 'Project',
     component: Project,
+      props: to => to.meta.props,
     beforeEnter: (to, from, next) => {
-      client.get('/project/hasAccess?username=' + to.params.username + '&projectKey=' + to.params.projectKey).then(() => {
-        next();
+      client.get('/project/hasAccess?username=' + to.params.username + '&projectKey=' + to.params.projectKey).then(response => {
+          to.meta.props = {
+            projectId: response.data
+          };
+          next();
       }).catch(() => {
         next('/-/404');
       });

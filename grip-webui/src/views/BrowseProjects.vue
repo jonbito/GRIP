@@ -20,6 +20,7 @@
                         outlined
                         dense
                         hide-details
+                        placeholder="Search projects"
                         @input="searchProjects"
                         clearable
                 >

@@ -1,5 +1,5 @@
 import {extend, setInteractionMode} from 'vee-validate';
-import {alpha_num, email, max, min, required} from 'vee-validate/dist/rules';
+import {alpha_num, email, max, min, numeric, required} from 'vee-validate/dist/rules';
 import client from "./client";
 
 setInteractionMode('eager');
@@ -17,6 +17,11 @@ extend('max', {
 extend('alpha_num', {
     ...alpha_num,
     message: '{_field_} must contain only alphanumeric characters'
+});
+
+extend('numeric', {
+    ...numeric,
+    message: '{_field_} must be numeric'
 });
 
 extend('email', {

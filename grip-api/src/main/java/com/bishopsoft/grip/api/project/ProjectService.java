@@ -52,10 +52,10 @@ public class ProjectService {
         return project.getId();
     }
 
-    public boolean hasAccess(String username, String projectKey) {
+    public long hasAccess(String username, String projectKey) {
         Optional<UserPermissionProject> userPermissionProjectOptional = userPermissionProjectRepository.findByUserUsernameIgnoreCaseAndProjectKeyIgnoreCase(username, projectKey);
         if (userPermissionProjectOptional.isPresent()) {
-            return true;
+            return userPermissionProjectOptional.get().getProject().getId();
         }
         throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
     }

@@ -28,7 +28,7 @@ public class ProjectController {
     }
 
     @GetMapping("/hasAccess")
-    public boolean hasAccess(@RequestParam String username, @RequestParam String projectKey) {
+    public long hasAccess(@RequestParam String username, @RequestParam String projectKey) {
         return projectService.hasAccess(username, projectKey);
     }
 

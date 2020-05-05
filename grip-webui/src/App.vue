@@ -36,7 +36,7 @@
         </v-app-bar>
 
         <v-content>
-            <v-container fluid style="max-width:1280px;margin:0 auto;">
+            <v-container fluid class="px-8">
                 <router-view/>
             </v-container>
         </v-content>
@@ -99,5 +99,10 @@
     }
     .v-btn--active.no-active::before {
         opacity: 0 !important;
+    }
+    .v-toolbar--flat {
+        .v-toolbar__content {
+            padding-left: 0;
+        }
     }
 </style>

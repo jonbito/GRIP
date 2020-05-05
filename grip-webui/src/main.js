@@ -15,7 +15,7 @@ Vue.config.productionTip = false;
 
 Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('ValidationProvider', ValidationProvider);
-Vue.use(require('vue-shortkey'), { prevent: ['input', 'textarea']});
+Vue.use(require('vue-shortkey'), { prevent: ['input', 'textarea', '.ProseMirror']});
 
 keycloak.init({
   onLoad: 'login-required'
