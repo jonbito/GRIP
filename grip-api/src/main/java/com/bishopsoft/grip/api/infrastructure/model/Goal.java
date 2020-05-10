@@ -1,6 +1,6 @@
 package com.bishopsoft.grip.api.infrastructure.model;
 
-import com.bishopsoft.grip.api.infrastructure.model.audit.UserDateAudit;
+import com.bishopsoft.grip.api.infrastructure.model.audit.DateAudit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,34 +22,28 @@ import java.util.List;
 @Entity
 @Table(name = "goal")
 @Getter @Setter @NoArgsConstructor
-public class Goal extends UserDateAudit {
+public class Goal extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "project_id")
-    private Project project;
+    @JoinColumn(name = "issue_id")
+    private Issue issue;
 
     private long niceId;
 
     private Integer size;
+    private String summary;
+    private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "milestone_id")
-    private Milestone milestone;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "creator", referencedColumnName = "id")
+    private UserAccount creator;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "agent_id")
-    private Agent agent;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "operation_id")
-    private Operation operation;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "assignee", referencedColumnName = "id")
+    private UserAccount assignee;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_id")

@@ -1,6 +1,6 @@
 package com.bishopsoft.grip.api.infrastructure.model;
 
-import com.bishopsoft.grip.api.infrastructure.model.audit.UserDateAudit;
+import com.bishopsoft.grip.api.infrastructure.model.audit.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.Getter;
@@ -29,7 +29,7 @@ import java.util.Date;
         name = "role_type",
         typeClass = PostgreSQLEnumType.class
 )
-public class UserPermissionProject extends UserDateAudit {
+public class UserPermissionProject extends DateAudit {
     @Enumerated(EnumType.STRING)
     @Type(type = "role_type")
     private RoleEnum role;

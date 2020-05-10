@@ -28,7 +28,7 @@
                 <h3 class="mb-3">Milestone 1</h3>
                 <v-card v-if="goals.length === 0" outlined class="d-flex justify-center pa-2 text-center grey--text"
                         style="border: 2px dashed #ccc;">
-                    Plan a milestone by dragging issues here.
+                    Plan a release by dragging issues here.
                 </v-card>
 
                 <h3 class="mt-6 mb-3">Backlog</h3>
@@ -72,7 +72,7 @@
     import GoalDetailColumn from "../components/GoalDetailColumn";
 
     export default {
-        name: 'Project',
+        name: 'ProjectBacklog',
         components: {
             ProjectBreadcrumbs,
             CreateGoalCard,

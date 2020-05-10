@@ -1,6 +1,6 @@
 package com.bishopsoft.grip.api.infrastructure.model;
 
-import com.bishopsoft.grip.api.infrastructure.model.audit.UserDateAudit;
+import com.bishopsoft.grip.api.infrastructure.model.audit.DateAudit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +20,7 @@ import java.util.Date;
 @Entity
 @Table(name = "rule")
 @Getter @Setter @NoArgsConstructor
-public class Rule extends UserDateAudit {
+public class Rule extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

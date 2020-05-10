@@ -46,8 +46,8 @@ public class RuleService {
     @Transactional
     public RuleDto create(RuleCreateBindingModel model) {
         Goal goal = goalRepository.findById(model.getGoalId()).orElseThrow(() -> new HttpException("Goal not found", HttpStatus.BAD_REQUEST));
-        permissionService.assertProjectRoleForLoggedInUser(goal.getProject().getId(), RoleEnum.REPORTER);
-        Project project = projectRepository.findById(goal.getProject().getId()).orElseThrow(() -> new HttpException("Could not find project", HttpStatus.INTERNAL_SERVER_ERROR));
+        permissionService.assertProjectRoleForLoggedInUser(goal.getIssue().getProject().getId(), RoleEnum.REPORTER);
+        Project project = projectRepository.findById(goal.getIssue().getProject().getId()).orElseThrow(() -> new HttpException("Could not find project", HttpStatus.INTERNAL_SERVER_ERROR));
         Rule rule = new Rule();
         rule.setGoal(goal);
         rule.setName(model.getName());
@@ -61,7 +61,7 @@ public class RuleService {
     public List<RuleDto> list(Optional<Long> goalId) {
         if(goalId.isPresent()) {
             Goal goal = goalRepository.findById(goalId.get()).orElseThrow(() -> new HttpException("Goal not found", HttpStatus.BAD_REQUEST));
-            permissionService.assertProjectRoleForLoggedInUser(goal.getProject().getId(), RoleEnum.REPORTER);
+            permissionService.assertProjectRoleForLoggedInUser(goal.getIssue().getProject().getId(), RoleEnum.REPORTER);
             List<Rule> rules = ruleRepository.findByGoal_Id(goalId.get());
             return rules.stream().map(r -> {
                 RuleDto dto = modelMapper.map(r, RuleDto.class);
@@ -77,7 +77,7 @@ public class RuleService {
     public void completeRule(long ruleId, boolean completed) {
         Rule rule = ruleRepository.findById(ruleId).orElseThrow(() -> new HttpException("Rule not found", HttpStatus.BAD_REQUEST));
         Goal goal = goalRepository.findById(rule.getGoal().getId()).orElseThrow(() -> new HttpException("Goal not found", HttpStatus.BAD_REQUEST));
-        permissionService.assertProjectRoleForLoggedInUser(goal.getProject().getId(), RoleEnum.REPORTER);
+        permissionService.assertProjectRoleForLoggedInUser(goal.getIssue().getProject().getId(), RoleEnum.REPORTER);
         if(completed) {
             rule.setCompleteDate(new Date());
             UserAccount loggedInAccount = entityManager.getReference(UserAccount.class, loggedInUser.getId());

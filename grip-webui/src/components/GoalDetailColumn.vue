@@ -15,7 +15,7 @@
                     </v-btn>
                 </v-toolbar>
                 <p class="headline mb-6">
-                    As a <strong>{{goal.agent.name}}</strong>, <strong>{{goal.operation.name}}</strong> the <strong>{{goal.subject.name}}</strong>
+                    {{goal.summary}}
                 </p>
                 <v-skeleton-loader
                         type="article, sentences, actions"
@@ -32,8 +32,14 @@
                             Create subgoal
                         </v-btn>
                     </div>
-                    <div class="subtitle-1 font-weight-bold mb-2">
-                        Rules
+
+                    <div class="d-flex justify-space-between align-center">
+                        <div class="subtitle-1 font-weight-bold">
+                            Rules
+                        </div>
+                        <v-btn class="grey--text text--darken-1" icon @click="createRuleDialogOpen = true">
+                            <v-icon>mdi-plus</v-icon>
+                        </v-btn>
                     </div>
 
                     <DraggableRules @choose="chooseRule" v-model="rules" group="rules" />
@@ -41,17 +47,16 @@
                             style="border: 2px dashed #ccc;">
                         Rules are empty
                     </v-card>
-                    <v-btn class="mt-1 mb-5 grey--text text--darken-1" text @click="createRuleDialogOpen = true">
-                        + Create rule
-                    </v-btn>
 
-                    <div class="subtitle-1 font-weight-bold my-3" v-if="goal.children.length > 0">
-                        Subgoals
+                    <div class="d-flex justify-space-between align-center mt-3" v-if="goal.children.length > 0">
+                        <div class="subtitle-1 font-weight-bold">
+                            Subgoals
+                        </div>
+                        <v-btn class="grey--text text--darken-1" icon @click="createSubgoalDialogOpen = true">
+                            <v-icon>mdi-plus</v-icon>
+                        </v-btn>
                     </div>
                     <DraggableSubgoals @choose="chooseSubgoal" v-model="goal.children" group="subgoals" />
-                    <v-btn class="mt-1 mb-5 grey--text text--darken-1" text @click="createSubgoalDialogOpen = true" v-if="goal.children.length > 0">
-                        + Create subgoal
-                    </v-btn>
                 </v-skeleton-loader>
             </div>
         </div>

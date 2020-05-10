@@ -1,6 +1,6 @@
 package com.bishopsoft.grip.api.infrastructure.model;
 
-import com.bishopsoft.grip.api.infrastructure.model.audit.UserDateAudit;
+import com.bishopsoft.grip.api.infrastructure.model.audit.DateAudit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +23,7 @@ import java.util.Set;
 @Entity
 @Table(name = "project")
 @Getter @Setter @NoArgsConstructor
-public class Project extends UserDateAudit {
+public class Project extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -34,6 +34,7 @@ public class Project extends UserDateAudit {
 
     private long goalIncrement;
     private long ruleIncrement;
+    private long issueIncrement;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "lead_id")

@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface GoalRepository extends JpaRepository<Goal, Long> {
-    @EntityGraph(attributePaths = {"agent", "operation", "subject", "children"})
-    List<Goal> findByProjectIdAndParentIsNull(long projectId);
+    @EntityGraph(attributePaths = {"children"})
+    List<Goal> findByIssueProject_IdAndParentIsNull(long projectId);
 }

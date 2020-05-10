@@ -10,6 +10,7 @@ import keycloak from "./keycloak";
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 
 require('./validation');
+require('./directives/click-outside');
 
 Vue.config.productionTip = false;
 

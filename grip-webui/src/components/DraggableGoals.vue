@@ -12,7 +12,12 @@
                 outlined
                 :class="'d-flex justify-space-between pa-2 issue-card' + (element.selected ? ' issue-card-selected' : '')"
         >
-            <div class="blue-grey--text text--darken-4">{{element.operation.name}} {{element.subject.name}}</div>
+            <div>
+                <v-icon color="green">mdi-bullseye-arrow</v-icon>
+                <span class="blue-grey--text text--darken-4 ml-2">
+                    {{element.summary}}
+                </span>
+            </div>
             <div>
                 <span class="mr-4 body-2 blue-grey--text text--darken-2">{{$route.params.projectKey}}-{{element.niceId}}</span>
                 <v-chip v-if="showSize" class="px-3" small>{{element.size != null ? element.size : '-'}}</v-chip>
