@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -34,12 +33,12 @@ public class IssueController {
     }
 
     @GetMapping("/{issueId}")
-    public IssueDetailDto list(@PathVariable long issueId) {
+    public IssueDetailDto get(@PathVariable long issueId) {
         return issueService.get(issueId);
     }
 
     @PatchMapping("/{issueId}")
-    public boolean patch(@PathVariable long issueId, @RequestBody Map<String, Object> updates) {
-        return issueService.patch(issueId, updates);
+    public IssueDetailDto patch(@PathVariable long issueId, @Valid @RequestBody IssuePatchBindingModel model) {
+        return issueService.patch(issueId, model);
     }
 }

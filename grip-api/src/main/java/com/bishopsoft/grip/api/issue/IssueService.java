@@ -1,5 +1,6 @@
 package com.bishopsoft.grip.api.issue;
 
+import com.bishopsoft.grip.api.infrastructure.ModelPatcher;
 import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
 import com.bishopsoft.grip.api.infrastructure.model.Issue;
 import com.bishopsoft.grip.api.infrastructure.model.Project;
@@ -14,9 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -71,9 +72,13 @@ public class IssueService {
         return modelMapper.map(issue, IssueDetailDto.class);
     }
 
-    public boolean patch(long issueId, Map<String, Object> updates) {
+    @Transactional
+    public IssueDetailDto patch(long issueId, @Valid IssuePatchBindingModel updates) {
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new HttpException("Issue not found", HttpStatus.BAD_REQUEST));
         permissionService.assertProjectRoleForLoggedInUser(issue.getProject().getId(), RoleEnum.REPORTER);
-        return true;
+
+        ModelPatcher.patch(issue, updates);
+
+        return modelMapper.map(issue, IssueDetailDto.class);
     }
 }

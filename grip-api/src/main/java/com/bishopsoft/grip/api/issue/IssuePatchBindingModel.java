@@ -1,15 +1,13 @@
 package com.bishopsoft.grip.api.issue;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 @Data
 public class IssuePatchBindingModel {
-    @NotNull(message = "Project Id is required")
-    private Long projectId;
-    @NotBlank(message = "Summary is required")
-    private String summary;
-    private String description;
+
+    private Optional<@Length(max = 5) String> summary;
+    private Optional<String> description;
 }

@@ -15,7 +15,7 @@
                     </v-btn>
                 </v-toolbar>
 
-                <EditableInput class="headline mb-3" :value="issue.summary">
+                <EditableInput class="headline mb-3" v-model="issue.summary" json-key="summary" :url="'/issue/' + issue.id">
                     {{issue.summary}}
                 </EditableInput>
                 <div class="mb-8">

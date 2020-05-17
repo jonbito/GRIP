@@ -13,13 +13,15 @@
                     style="width: 100%;"
                     ref="field"
             />
-            <v-btn tile absolute style="right:40px;top:50px;padding:0 5px;min-width: auto;" small><v-icon>mdi-check</v-icon></v-btn>
-            <v-btn @click="cancelEditing" tile absolute style="right:0px;top:50px;padding:0 5px;min-width: auto;" small><v-icon>mdi-close</v-icon></v-btn>
+            <v-btn v-if="!loading" tile absolute style="right:40px;top:50px;padding:0 5px;min-width: auto;" small><v-icon>mdi-check</v-icon></v-btn>
+            <v-btn v-if="!loading" @click="cancelEditing" tile absolute style="right:0px;top:50px;padding:0 5px;min-width: auto;" small><v-icon>mdi-close</v-icon></v-btn>
         </form>
     </div>
 </template>
 
 <script>
+    import client from "../client";
+
     var waitTimeout = null;
 
     export default {
@@ -29,18 +31,31 @@
             editing: false,
             loading: false
         }),
-        props: ['value'],
+        props: {
+            value: {
+                required: true
+            },
+            url: {
+                required: true,
+                type: String
+            },
+            jsonKey: {
+                required: true,
+                type: String
+            }
+        },
         methods: {
             async startEditing() {
                 if(!this.editing) {
                     this.editing = true;
+                    this.newValue = this.value;
                     await this.$nextTick();
                     this.$refs.field.focus();
                 }
             },
             wait(callback) {
-                this.loading = true;
                 waitTimeout = setTimeout(() => {
+                    this.loading = true;
                     waitTimeout = null;
                     callback();
                 }, 200);
@@ -58,8 +73,21 @@
                 }
             },
             submit() {
-                this.editing = false;
-                this.loading = false;
+                if(this.newValue !== this.value) {
+                    client.patch(this.url, {
+                        [this.jsonKey]: this.newValue
+                    }).then((response) => {
+                        this.$emit('success', response.data);
+                        this.$emit('input', this.newValue);
+                    }).catch((err) => {
+                        console.log(err);
+                    }).then(() => {
+                        this.editing = false;
+                        this.loading = false;
+                    });
+                } else {
+                    this.cancelEditing();
+                }
             },
         },
         beforeDestroy() {
