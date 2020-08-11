@@ -6,11 +6,15 @@ import ProjectBacklog from "../views/ProjectBacklog";
 import client from "../client";
 import NotFound from "../views/NotFound";
 import ProjectIssues from "../views/ProjectIssues";
+import OrganizationPlan from "../org/OrganizationPlan";
+import CreateOrganization from "../org/CreateOrganization";
+import OrganizationInvite from "../org/OrganizationInvite";
+import OrgLayout from "@/layout/OrgLayout";
 
 Vue.use(VueRouter);
 
 const hasAccessToProject = (to, from, next) => {
-  client.get('/project/hasAccess?username=' + to.params.username + '&projectKey=' + to.params.projectKey).then(response => {
+  client.get('/project/hasAccess?&projectKey=' + to.params.projectKey).then(response => {
     to.meta.props = {
       projectId: response.data
     };
@@ -27,6 +31,19 @@ const routes = [
     component: BrowseProjects
   },
   {
+    path: '/-/organizations/plan',
+    component: OrganizationPlan
+  },
+  {
+    path: '/-/organizations/create',
+    component: CreateOrganization
+  },
+  {
+    path: '/organizations/:orgUrl/invite',
+    component: OrganizationInvite,
+    meta: { layout: OrgLayout }
+  },
+  {
     path: '/-/projects/new',
     name: 'Create Project',
     component: CreateProject
@@ -37,7 +54,7 @@ const routes = [
     component: NotFound
   },
   {
-    path: '/:username/:projectKey',
+    path: '/:orgId/:projectKey',
     name: 'ProjectIssues',
     component: ProjectIssues,
     props: to => to.meta.props,
@@ -48,7 +65,6 @@ const routes = [
     name: 'ProjectBacklog',
     component: ProjectBacklog,
     props: to => to.meta.props,
-    beforeEnter: hasAccessToProject,
   },
 ];
 

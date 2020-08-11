@@ -6,8 +6,6 @@ import lombok.Data;
 public class ProjectListDTO {
     private long id;
     private String name;
-    private String group;
-    private String url;
     private String key;
     private boolean starred;
     private String leadId;

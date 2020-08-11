@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -19,4 +20,7 @@ public class ProjectCreateBindingModel {
     @Pattern(regexp = "^[A-Za-z0-9]+$", message = "Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters")
     @StartsWithLetterConstraint(message = "Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters")
     private String key;
+
+    @NotNull
+    private long orgId;
 }

@@ -22,14 +22,14 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "user_permission_project")
+@Table(name = "org_user_permission")
 @Getter @Setter @NoArgsConstructor
-@IdClass(UserPermissionProjectId.class)
+@IdClass(OrgUserPermissionId.class)
 @TypeDef(
         name = "role_type",
         typeClass = PostgreSQLEnumType.class
 )
-public class UserPermissionProject extends DateAudit {
+public class OrgUserPermission extends DateAudit {
     @Enumerated(EnumType.STRING)
     @Type(type = "role_type")
     private RoleEnum role;
@@ -38,9 +38,9 @@ public class UserPermissionProject extends DateAudit {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "org_id")
     @JsonIgnore
-    private Project project;
+    private Org org;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

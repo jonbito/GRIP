@@ -4,7 +4,8 @@ import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
 import com.bishopsoft.grip.api.infrastructure.model.UserAccount;
 import com.bishopsoft.grip.api.infrastructure.repository.UserRepository;
 import com.bishopsoft.grip.api.infrastructure.service.KeycloakService;
-import javafx.util.Pair;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,32 +24,23 @@ public class AccountService {
     }
 
     @Transactional
-    public void createAccount(String role, String whosUsing, String username, Principal principal) {
+    public void createAccount(String role, String whosUsing, Principal principal) {
         boolean userExists = userRepository.findById(UUID.fromString(principal.getName())).isPresent();
         if(userExists) {
             throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
         }
 
-        if(usernameExists(username)) {
-            throw new HttpException("Username already exists", HttpStatus.BAD_REQUEST);
-        }
+        UserRepresentation userRepresentation = keycloakService.getUserRepresentation(UUID.fromString(principal.getName()));
 
         UserAccount userAccount = new UserAccount();
         userAccount.setId(UUID.fromString(principal.getName()));
-        userAccount.setUsername(username);
+        userAccount.setEmail(userRepresentation.getEmail());
+        userAccount.setFirstName(userRepresentation.getFirstName());
+        userAccount.setLastName(userRepresentation.getLastName());
         userAccount.setRole(role);
-
-        Pair<String, String> fullName = keycloakService.getFullName(UUID.fromString(principal.getName()));
-        userAccount.setFirstName(fullName.getKey());
-        userAccount.setLastName(fullName.getValue());
 
         userRepository.save(userAccount);
 
         keycloakService.setUserAttribute(UUID.fromString(principal.getName()), "accountCreated", "true");
-        keycloakService.setUsername(UUID.fromString(principal.getName()), username);
-    }
-
-    public boolean usernameExists(String username) {
-        return userRepository.existsUserAccountByUsername(username);
     }
 }

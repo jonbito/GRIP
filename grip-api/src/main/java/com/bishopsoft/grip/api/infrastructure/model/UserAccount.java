@@ -32,22 +32,19 @@ public class UserAccount extends DateAudit {
     @org.hibernate.annotations.Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID id;
     private String role;
-    private String username;
+    private String email;
     private String firstName;
     private String lastName;
 
     @Type(type = "list-array")
-    @Column(name = "starred_projects", columnDefinition = "integer[]")
+    @Column(name = "starred_projects", columnDefinition = "bigint[]")
     private List<Long> starredProjects = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")
     private Upload avatar;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private Set<UserPermissionProject> userPermissionProjects = new HashSet<>();
-
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private Set<UserPermissionGroup> userPermissionGroups = new HashSet<>();
+    private Set<OrgUserPermission> orgUserPermissions = new HashSet<>();
 
     @OneToMany(mappedBy = "lead", orphanRemoval = true)
     private Set<Project> leadProjects = new HashSet<>();

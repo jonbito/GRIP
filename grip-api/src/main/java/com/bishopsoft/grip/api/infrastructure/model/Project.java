@@ -40,13 +40,10 @@ public class Project extends DateAudit {
     @JoinColumn(name = "lead_id")
     private UserAccount lead;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_group_id")
-    private Group ownerGroup;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "org_id")
+    private Org org;
 
     @OneToOne(mappedBy = "project")
     private Upload avatar;
-
-    @OneToMany(mappedBy = "project", orphanRemoval = true)
-    private Set<UserPermissionProject> userPermissions = new HashSet<>();
 }

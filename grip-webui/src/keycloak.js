@@ -1,7 +1,7 @@
 import Keycloak from "keycloak-js";
 
 export default Keycloak({
-    url: 'http://localhost:8888/auth',
-    realm: 'Grip',
-    clientId: 'grip-webui',
+    url: process.env.VUE_APP_KEYCLOAK_URL,
+    realm: process.env.VUE_APP_KEYCLOAK_REALM,
+    clientId: process.env.VUE_APP_KEYCLOAK_RESOURCE,
 });

@@ -8,19 +8,6 @@
                 <v-card-text>
                     <validation-observer v-slot="{ handleSubmit }">
                         <form @submit.prevent="handleSubmit(submit)">
-
-                            <h3 class="mb-2 black--text">Username</h3>
-                            <validation-provider v-slot="{ errors, passed, pending }" :debounce="500" mode="aggressive" name="Username" rules="required|alpha_num|max:128|username_available" >
-                                <v-text-field
-                                        autofocus
-                                        v-model="username"
-                                        outlined
-                                        :error-messages="errors"
-                                        :loading="pending"
-                                        :success-messages="passed ? 'Username is available' : []"
-                                />
-                            </validation-provider>
-
                             <h3 class="mb-2 black--text">Role</h3>
                             <validation-provider v-slot="{ errors }" name="Role" rules="required">
                                 <v-select
@@ -96,7 +83,6 @@
             submit() {
                 this.loading = true;
                 client.post('/account', {
-                    username: this.username,
                     role: this.role,
                     whosUsing: this.whosUsing
                 }).then(() => {

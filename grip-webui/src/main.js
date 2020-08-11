@@ -7,10 +7,10 @@ import vuetify from './plugins/vuetify';
 import client from './client';
 import AppSignup from "./AppSignup";
 import keycloak from "./keycloak";
-import {ValidationObserver, ValidationProvider} from 'vee-validate';
+import {ValidationObserver, ValidationProvider} from './util/vee-validate';
 
 require('./validation');
-require('./directives/click-outside');
+//require('./directives/click-outside');
 
 Vue.config.productionTip = false;
 

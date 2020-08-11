@@ -6,11 +6,10 @@ import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
 import com.bishopsoft.grip.api.infrastructure.model.Project;
 import com.bishopsoft.grip.api.infrastructure.model.RoleEnum;
 import com.bishopsoft.grip.api.infrastructure.model.UserAccount;
-import com.bishopsoft.grip.api.infrastructure.model.UserPermissionProject;
 import com.bishopsoft.grip.api.infrastructure.repository.ProjectRepository;
-import com.bishopsoft.grip.api.infrastructure.repository.UserPermissionProjectRepository;
 import com.bishopsoft.grip.api.infrastructure.repository.UserRepository;
 import com.bishopsoft.grip.api.infrastructure.security.LoggedInUser;
+import com.bishopsoft.grip.api.permission.PermissionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,59 +26,53 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final UserPermissionProjectRepository userPermissionProjectRepository;
     private final UserRepository userRepository;
     private final LoggedInUser loggedInUser;
+    private final PermissionService permissionService;
     private final FileService fileService;
 
-    public ProjectService(ProjectRepository projectRepository, UserPermissionProjectRepository userPermissionProjectRepository, UserRepository userRepository, LoggedInUser loggedInUser, FileService fileService) {
+    public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, LoggedInUser loggedInUser, PermissionService permissionService, FileService fileService) {
         this.projectRepository = projectRepository;
-        this.userPermissionProjectRepository = userPermissionProjectRepository;
         this.userRepository = userRepository;
         this.loggedInUser = loggedInUser;
+        this.permissionService = permissionService;
         this.fileService = fileService;
     }
 
     @Transactional
     public long create(ProjectCreateBindingModel projectCreateBindingModel) {
         projectCreateBindingModel.setKey(projectCreateBindingModel.getKey().toUpperCase());
-        UserAccount user = userRepository.findById(loggedInUser.getId()).orElseThrow(() -> new HttpException("Couldn't find user", HttpStatus.INTERNAL_SERVER_ERROR));
-        Optional<UserPermissionProject> findByKey = userPermissionProjectRepository.findByUser_IdAndProjectKey(user.getId(), projectCreateBindingModel.getKey());
-        if (findByKey.isPresent()) {
+        permissionService.assertOrgRoleForLoggedInUser(projectCreateBindingModel.getOrgId(), RoleEnum.REPORTER);
+        if(projectRepository.existsByKeyAndOrg_Id(projectCreateBindingModel.getKey(), projectCreateBindingModel.getOrgId())) {
             throw new HttpException("Project key already exists", HttpStatus.BAD_REQUEST);
         }
+
+        UserAccount user = userRepository.findById(loggedInUser.getId()).orElseThrow(() -> new HttpException("Couldn't find user", HttpStatus.INTERNAL_SERVER_ERROR));
         Project project = createProject(projectCreateBindingModel, user);
-        createOwnerPermission(project, user);
         return project.getId();
     }
 
-    public long hasAccess(String username, String projectKey) {
-        Optional<UserPermissionProject> userPermissionProjectOptional = userPermissionProjectRepository.findByUserUsernameIgnoreCaseAndProjectKeyIgnoreCase(username, projectKey);
-        if (userPermissionProjectOptional.isPresent()) {
-            return userPermissionProjectOptional.get().getProject().getId();
-        }
-        throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
-    }
+    public ListPageDTO<ProjectListDTO> listProjects(long orgId, String sortBy, Optional<Boolean> sortDesc, int page, int itemsPerPage, String search, boolean starred) {
+        permissionService.assertOrgRoleForLoggedInUser(orgId, RoleEnum.GUEST);
 
-    public ListPageDTO<ProjectListDTO> listProjects(String sortBy, Optional<Boolean> sortDesc, int page, int itemsPerPage, String search, boolean starred) {
-        Sort sort = sortBy.isBlank() ? Sort.by("project.name").ascending() : Sort.by("project." + sortBy);
+        Sort sort = sortBy.isBlank() ? Sort.by("name").ascending() : Sort.by(sortBy);
         sort = sortDesc.isPresent() && sortDesc.get() ? sort.descending() : sort.ascending();
 
-        Page<UserPermissionProject> userPermissionProjects = starred ?
-                userPermissionProjectRepository.searchByUserAndStarred(loggedInUser.getId(), search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort))
-                : userPermissionProjectRepository.searchByUser(loggedInUser.getId(), search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort));
 
-        List<ProjectListDTO> projectDtos = userPermissionProjects.getContent().stream()
-                .map(u -> {
+        UserAccount user = userRepository.findById(loggedInUser.getId()).orElseThrow(() -> new HttpException("Couldn't find user", HttpStatus.INTERNAL_SERVER_ERROR));
+        Page<Project> projects = starred ?
+                projectRepository.searchByStarred(orgId, new HashSet<>(user.getStarredProjects()), search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort))
+                : projectRepository.search(orgId, search.replaceAll("\\s", ""), PageRequest.of(page - 1, itemsPerPage, sort));
+
+        List<ProjectListDTO> projectDtos = projects.getContent().stream()
+                .map(p -> {
                     ProjectListDTO dto = new ProjectListDTO();
-                    dto.setId(u.getProject().getId());
-                    dto.setKey(u.getProject().getKey());
-                    dto.setName(u.getProject().getName());
-                    dto.setGroup(u.getUser().getFirstName() + " " + u.getUser().getLastName());
-                    dto.setLeadId(u.getProject().getLead().getId().toString());
-                    dto.setLeadName(u.getProject().getLead().getFirstName() + " " + u.getProject().getLead().getLastName());
-                    dto.setUrl("/" + u.getUser().getUsername() + "/" + u.getProject().getKey());
-                    dto.setStarred(u.getUser().getStarredProjects().contains(u.getProject().getId()));
+                    dto.setId(p.getId());
+                    dto.setKey(p.getKey());
+                    dto.setName(p.getName());
+                    dto.setLeadId(p.getLead().getId().toString());
+                    dto.setLeadName(p.getLead().getFirstName() + " " + p.getLead().getLastName());
+                    dto.setStarred(user.getStarredProjects().contains(p.getId()));
                     dto.setLeadAvatar(null);
                     return dto;
                 })
@@ -86,10 +80,11 @@ public class ProjectService {
 
         ListPageDTO<ProjectListDTO> ret = new ListPageDTO<>();
         ret.setContents(projectDtos);
-        ret.setTotal(userPermissionProjects.getTotalElements());
+        ret.setTotal(projects.getTotalElements());
         return ret;
     }
 
+    @Transactional
     private Project createProject(ProjectCreateBindingModel projectCreateBindingModel, UserAccount user) {
         Project project = new Project();
         project.setKey(projectCreateBindingModel.getKey());
@@ -100,22 +95,9 @@ public class ProjectService {
         return project;
     }
 
-    private void createOwnerPermission(Project project, UserAccount user) {
-        UserPermissionProject userPermissionProject = new UserPermissionProject();
-        userPermissionProject.setRole(RoleEnum.OWNER);
-        userPermissionProject.setProject(project);
-        userPermissionProject.setUser(user);
-
-        userPermissionProjectRepository.save(userPermissionProject);
-    }
-
-    public boolean keyExists(String key, Optional<Long> groupId) {
-        key = key.toUpperCase();
-        if (groupId.isPresent()) {
-            return projectRepository.existsByKeyAndOwnerGroup_Id(key, groupId.get());
-        }
-
-        return userPermissionProjectRepository.existsByUser_IdAndProjectKey(loggedInUser.getId(), key);
+    public boolean keyExists(String key, long orgId) {
+        permissionService.assertOrgRoleForLoggedInUser(orgId, RoleEnum.REPORTER);
+        return projectRepository.existsByKeyAndOrg_Id(key.toUpperCase(), orgId);
     }
 
     @Transactional

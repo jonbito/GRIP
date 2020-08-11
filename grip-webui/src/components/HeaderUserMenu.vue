@@ -23,7 +23,7 @@
                 <v-list-item>
                     <v-list-item-content>
                         <v-list-item-title><strong>{{fullName}}</strong></v-list-item-title>
-                        <v-list-item-subtitle>@{{username}}</v-list-item-subtitle>
+                        <v-list-item-subtitle>{{username}}</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>

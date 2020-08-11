@@ -4,7 +4,7 @@
             app
             permanent
             width="300"
-            v-if="show"
+            v-if="!!this.$route.params.projectKey"
     >
         <v-list-item>
             <v-list-item-icon>
@@ -25,7 +25,7 @@
         <v-divider></v-divider>
 
         <v-list dense>
-            <v-list-item :to="urlPrefix + '/'">
+            <v-list-item :to="this.$route.params.projectKey + '/'">
                 <v-list-item-action>
                     <v-icon>
                         mdi-format-list-bulleted-triangle
@@ -55,14 +55,6 @@
 
 <script>
     export default {
-        name: "ProjectNavigationDrawer",
-        computed: {
-            show: function() {
-                return !!this.$route.params.projectKey;
-            },
-            urlPrefix: function() {
-                return '/' + this.$route.params.username + '/' + this.$route.params.projectKey;
-            }
-        }
+        name: "ProjectNavigationDrawer"
     }
 </script>

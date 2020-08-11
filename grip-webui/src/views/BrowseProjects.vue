@@ -44,12 +44,12 @@
                 :search="search"
         >
             <template v-slot:item.name="{ item }">
-                <router-link :to="item.url" class="mr-1">
+                <router-link :to="'/' + item.key" class="mr-1">
                     <v-avatar color="#eee" style="border-radius: 15%;">
                         <span v-if="!item.avatar" class="headline grey--text text--darken-2">{{item.name.charAt(0).toUpperCase()}}</span>
                     </v-avatar>
                 </router-link>&nbsp;
-                <router-link :to="item.url" class="link">{{item.group}} / <strong>{{item.name}}</strong></router-link>
+                <router-link :to="'/' + item.key" class="link"><strong>{{item.name}}</strong></router-link>
             </template>
             <template v-slot:item.data-table-select="{ item }">
                 <v-checkbox on-icon="mdi-star" off-icon="mdi-star-outline" v-model="item.starred" @change="starProject($event, item)"/>
@@ -134,6 +134,7 @@
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
 
                 const urlParams = new URLSearchParams();
+                urlParams.append('orgId', 1);
                 urlParams.append('sortBy', sortBy);
                 urlParams.append('sortDesc', sortDesc);
                 urlParams.append('page', page);

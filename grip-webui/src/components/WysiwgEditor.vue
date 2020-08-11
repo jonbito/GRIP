@@ -4,7 +4,7 @@
                 :value="value"
                 @input="(val) => $emit('input', val)"
                 :extensions="extensions"
-                style="min-height: 200px;"
+                @init="(editor) => $emit('init', editor)"
         />
     </div>
 </template>

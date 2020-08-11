@@ -27,13 +27,9 @@ public class ProjectController {
         return projectService.create(model);
     }
 
-    @GetMapping("/hasAccess")
-    public long hasAccess(@RequestParam String username, @RequestParam String projectKey) {
-        return projectService.hasAccess(username, projectKey);
-    }
-
     @GetMapping("/list")
     public ListPageDTO<ProjectListDTO> listProjects(
+            @RequestParam long orgId,
             @RequestParam String sortBy,
             @RequestParam Optional<Boolean> sortDesc,
             @RequestParam int page,
@@ -41,12 +37,12 @@ public class ProjectController {
             @RequestParam String search,
             @RequestParam boolean starred
     ) {
-        return projectService.listProjects(sortBy, sortDesc, page, itemsPerPage, search, starred);
+        return projectService.listProjects(orgId, sortBy, sortDesc, page, itemsPerPage, search, starred);
     }
 
     @GetMapping("/keyExists/{key}")
-    public boolean projectKeyExists(@PathVariable(value = "key") String key, @RequestParam Optional<Long> groupId) {
-        return projectService.keyExists(key, groupId);
+    public boolean projectKeyExists(@PathVariable(value = "key") String key, @RequestParam long orgId) {
+        return projectService.keyExists(key, orgId);
     }
 
     @PostMapping("/star/{projectId}/{star}")

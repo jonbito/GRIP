@@ -1,7 +1,7 @@
 package com.bishopsoft.grip.api.file;
 
 import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
-import com.bishopsoft.grip.api.infrastructure.model.Group;
+import com.bishopsoft.grip.api.infrastructure.model.Org;
 import com.bishopsoft.grip.api.infrastructure.model.Project;
 import com.bishopsoft.grip.api.infrastructure.model.RoleEnum;
 import com.bishopsoft.grip.api.infrastructure.model.Upload;
@@ -60,7 +60,7 @@ public class FileService {
     }
 
     @Transactional
-    public UUID upload(MultipartFile file, UploadTypeEnum uploadType, Optional<Long> projectId, Optional<Long> groupId) throws IOException {
+    public UUID upload(MultipartFile file, UploadTypeEnum uploadType, Optional<Long> projectId, Optional<Long> orgId) throws IOException {
         Upload upload;
         switch (uploadType) {
             case USER_AVATAR:
@@ -76,11 +76,11 @@ public class FileService {
                 upload.setProject(project);
                 break;
             case GROUP_AVATAR:
-                groupId.orElseThrow(() -> new HttpException("Group Id required", HttpStatus.BAD_REQUEST));
-                permissionService.assertGroupRoleForLoggedInUser(groupId.get(), RoleEnum.OWNER);
-                Group group = entityManager.getReference(Group.class, groupId.get());
-                upload = Optional.of(group.getAvatar()).orElse(new Upload());
-                upload.setGroup(group);
+                orgId.orElseThrow(() -> new HttpException("Group Id required", HttpStatus.BAD_REQUEST));
+                permissionService.assertOrgRoleForLoggedInUser(orgId.get(), RoleEnum.OWNER);
+                Org org = entityManager.getReference(Org.class, orgId.get());
+                upload = Optional.of(org.getAvatar()).orElse(new Upload());
+                upload.setOrg(org);
                 break;
             default:
                 throw new HttpException("Upload type doesn't exist", HttpStatus.BAD_REQUEST);
@@ -105,7 +105,7 @@ public class FileService {
                 }
                 break;
             case GROUP_AVATAR:
-                permissionService.assertGroupRoleForLoggedInUser(upload.getGroup().getId(), RoleEnum.OWNER);
+                permissionService.assertOrgRoleForLoggedInUser(upload.getOrg().getId(), RoleEnum.OWNER);
                 break;
             case PROJECT_AVATAR:
                 permissionService.assertProjectRoleForLoggedInUser(upload.getProject().getId(), RoleEnum.MAINTAINER);

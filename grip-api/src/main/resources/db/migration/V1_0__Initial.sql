@@ -8,7 +8,7 @@ CREATE TYPE upload_type AS ENUM (
 
 CREATE TABLE IF NOT EXISTS user_account (
     id UUID PRIMARY KEY,
-    username VARCHAR(128),
+    email VARCHAR(128),
     first_name VARCHAR(64),
     last_name VARCHAR(64),
     role VARCHAR(256),
@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS user_account (
     updated_at timestamp
 );
 
-CREATE TABLE IF NOT EXISTS project_group (
-     id bigserial PRIMARY KEY,
-     name VARCHAR(64),
-     key VARCHAR(64),
-     description VARCHAR(256),
-     created_at timestamp,
-     updated_at timestamp
+CREATE TABLE IF NOT EXISTS org (
+    id bigserial PRIMARY KEY,
+    name varchar(128),
+    email varchar(128),
+    url varchar(128),
+    created_at timestamp,
+    updated_at timestamp
 );
 
 CREATE TABLE IF NOT EXISTS project (
@@ -34,11 +34,11 @@ CREATE TABLE IF NOT EXISTS project (
     rule_increment BIGINT NOT NULL DEFAULT 1,
     issue_increment BIGINT NOT NULL DEFAULT 1,
     lead_id UUID NOT NULL,
-    owner_group_id INTEGER,
+    org_id BIGINT NOT NULL,
     created_at timestamp,
     updated_at timestamp,
     FOREIGN KEY (lead_id) REFERENCES user_account (id) ON DELETE CASCADE,
-    FOREIGN KEY (owner_group_id) REFERENCES project_group (id) ON DELETE CASCADE
+    FOREIGN KEY (org_id) REFERENCES org (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS release (
@@ -99,28 +99,16 @@ CREATE TABLE IF NOT EXISTS rule (
     FOREIGN KEY (goal_id) REFERENCES goal (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS user_permission_group (
+CREATE TABLE IF NOT EXISTS org_user_permission (
     user_account_id UUID NOT NULL,
-    group_id BIGINT NOT NULL,
+    org_id BIGINT NOT NULL,
     role role_type NOT NULL,
     expiration timestamp,
     created_at timestamp,
     updated_at timestamp,
-    PRIMARY KEY (user_account_id, group_id),
+    PRIMARY KEY (user_account_id, org_id),
     FOREIGN KEY (user_account_id) REFERENCES user_account (id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES project_group (id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS user_permission_project (
-   user_account_id UUID NOT NULL,
-   project_id bigint NOT NULL,
-   role role_type NOT NULL,
-   expiration timestamp,
-   created_at timestamp,
-   updated_at timestamp,
-   PRIMARY KEY (user_account_id, project_id),
-   FOREIGN KEY (user_account_id) REFERENCES user_account (id) ON DELETE CASCADE,
-   FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
+    FOREIGN KEY (org_id) REFERENCES org (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS upload (
@@ -131,11 +119,11 @@ CREATE TABLE IF NOT EXISTS upload (
     upload_type upload_type NOT NULL,
     user_account_id UUID,
     project_id BIGINT,
-    group_id BIGINT,
+    org_id BIGINT,
     created_at timestamp,
     updated_at timestamp,
     FOREIGN KEY (user_account_id) REFERENCES user_account (id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES project_group (id) ON DELETE CASCADE
+    FOREIGN KEY (org_id) REFERENCES org (id) ON DELETE CASCADE
 );
 

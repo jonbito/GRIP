@@ -39,15 +39,7 @@
         <div id="app">
         <v-app>
             <header>
-                <svg width="24" height="24" class="tanuki-logo" viewBox="0 0 36 36">
-                    <path class="tanuki-shape tanuki-left-ear" fill="#e24329" d="M2 14l9.38 9v-9l-4-12.28c-.205-.632-1.176-.632-1.38 0z"></path>
-                    <path class="tanuki-shape tanuki-right-ear" fill="#e24329" d="M34 14l-9.38 9v-9l4-12.28c.205-.632 1.176-.632 1.38 0z"></path>
-                    <path class="tanuki-shape tanuki-nose" fill="#e24329" d="M18,34.38 3,14 33,14 Z"></path>
-                    <path class="tanuki-shape tanuki-left-eye" fill="#fc6d26" d="M18,34.38 11.38,14 2,14 6,25Z"></path>
-                    <path class="tanuki-shape tanuki-right-eye" fill="#fc6d26" d="M18,34.38 24.62,14 34,14 30,25Z"></path>
-                    <path class="tanuki-shape tanuki-left-cheek" fill="#fca326" d="M2 14L.1 20.16c-.18.565 0 1.2.5 1.56l17.42 12.66z"></path>
-                    <path class="tanuki-shape tanuki-right-cheek" fill="#fca326" d="M34 14l1.9 6.16c.18.565 0 1.2-.5 1.56L18 34.38z"></path>
-                </svg>
+                <svg width="24" height="24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 128.13 136.7"><defs><linearGradient id="linear-gradient" x1="49.04" y1="32.22" x2="49.04" y2="94.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#40c7f4"/><stop offset="1" stop-color="#457bbe"/></linearGradient><linearGradient id="New_Gradient_Swatch_copy" x1="83" y1="32.22" x2="83" y2="94.1" xlink:href="#linear-gradient"/><linearGradient id="New_Gradient_Swatch" x1="116.81" y1="32.22" x2="116.81" y2="60.29" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f26b6b"/><stop offset="0.43" stop-color="#ef3a47"/></linearGradient><linearGradient id="New_Gradient_Swatch-2" x1="150.78" y1="32.22" x2="150.78" y2="60.29" xlink:href="#New_Gradient_Swatch"/><linearGradient id="linear-gradient-2" x1="100" y1="68.58" x2="100" y2="167.78" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#409fd8"/><stop offset="1" stop-color="#426bb3"/></linearGradient></defs><path d="M36.44,32.22H61.63V94.1l-25.19-.32Z" transform="translate(-35.94 -31.72)" style="stroke:#231f20;stroke-miterlimit:10;fill:url(#linear-gradient)"/><path d="M70.25,32.22H95.76L95.44,94.1l-25.19-.32Z" transform="translate(-35.94 -31.72)" style="stroke:#231f20;stroke-miterlimit:10;fill:url(#New_Gradient_Swatch_copy)"/><path d="M104.06,32.22h25.51V60.29L104.06,60Z" transform="translate(-35.94 -31.72)" style="stroke:#231f20;stroke-miterlimit:10;fill:url(#New_Gradient_Swatch)"/><path d="M138.18,32.22h25.2V60.29h-25.2Z" transform="translate(-35.94 -31.72)" style="stroke:#231f20;stroke-miterlimit:10;fill:url(#New_Gradient_Swatch-2)"/><path d="M163.38,68.58v35.09c0,4,.7,10.12-.64,13.08l-62.83,51-63.47-52V102.71l93.13-.32V94.1l-25.51-.32.31-25.2Z" transform="translate(-35.94 -31.72)" style="stroke:#231f20;stroke-miterlimit:10;fill:url(#linear-gradient-2)"/></svg>
             </header>
             <v-content>
                 <v-container fluid style="max-width:960px;margin:0 auto;">

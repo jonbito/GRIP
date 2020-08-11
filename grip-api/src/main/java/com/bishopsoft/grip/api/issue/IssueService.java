@@ -10,6 +10,7 @@ import com.bishopsoft.grip.api.infrastructure.repository.ProjectRepository;
 import com.bishopsoft.grip.api.infrastructure.security.LoggedInUser;
 import com.bishopsoft.grip.api.permission.PermissionService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,7 @@ public class IssueService {
     public List<IssueDto> list(Optional<Long> projectId) {
         if(projectId.isPresent()) {
             permissionService.assertProjectRoleForLoggedInUser(projectId.get(), RoleEnum.REPORTER);
-            List<Issue> issues = issueRepository.findByProjectId(projectId.get());
+            List<Issue> issues = issueRepository.findByProjectId(projectId.get(), Sort.by(Sort.Direction.ASC, "id"));
             return issues.stream().map(i -> {
                 IssueDto dto = modelMapper.map(i, IssueDto.class);
                 dto.setProjectId(i.getProject().getId());

@@ -1,7 +1,6 @@
 package com.bishopsoft.grip.api.infrastructure.service;
 
 import com.bishopsoft.grip.api.infrastructure.exception.HttpException;
-import javafx.util.Pair;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -80,16 +79,8 @@ public class KeycloakService {
         userResource.update(userRepresentation);
     }
 
-    public void setUsername(UUID userId, String username) {
+    public UserRepresentation getUserRepresentation(UUID userId) {
         UserResource userResource = keycloak.realm(realm).users().get(userId.toString());
-        UserRepresentation userRepresentation = userResource.toRepresentation();
-        userRepresentation.setUsername(username);
-        userResource.update(userRepresentation);
-    }
-
-    public Pair<String, String> getFullName(UUID userId) {
-        UserResource userResource = keycloak.realm(realm).users().get(userId.toString());
-        UserRepresentation userRepresentation = userResource.toRepresentation();
-        return new Pair<>(userRepresentation.getFirstName(), userRepresentation.getLastName());
+        return userResource.toRepresentation();
     }
 }

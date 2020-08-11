@@ -49,6 +49,6 @@ public class Upload extends DateAudit {
     private Project project;
 
     @OneToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
-    private Group group;
+    @JoinColumn(name = "org_id", referencedColumnName = "id")
+    private Org org;
 }

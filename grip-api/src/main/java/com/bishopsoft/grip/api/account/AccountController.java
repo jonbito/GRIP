@@ -29,7 +29,6 @@ public class AccountController {
     public ResponseEntity<String> signUp(@RequestBody @Valid AccountSignupBindingModel accountSignupBindingModel, Principal principal) {
         accountService.createAccount(accountSignupBindingModel.getRole(),
                 accountSignupBindingModel.getWhosUsing(),
-                accountSignupBindingModel.getUsername(),
                 principal);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
@@ -38,10 +37,5 @@ public class AccountController {
     public byte[] getAvatar() throws IOException {
         ClassPathResource classPathResource = new ClassPathResource("user-avatar/default-avatar.png", getClass().getClassLoader());
         return classPathResource.getInputStream().readAllBytes();
-    }
-
-    @GetMapping(value = "/usernameExists/{username}")
-    public boolean usernameExists(@PathVariable(value = "username") String username) {
-        return accountService.usernameExists(username);
     }
 }

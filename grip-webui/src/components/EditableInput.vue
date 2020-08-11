@@ -1,7 +1,7 @@
 <template>
     <div class="editable-input-container" @click="startEditing" :class="{'editable-input-container-editing': editing}">
         <slot v-if="!editing" />
-        <form v-else @submit.prevent="submit" style="z-index: 20;position:relative;width:100%;">
+        <form v-else @submit.prevent="$refs.field.blur()" style="z-index: 20;position:relative;width:100%;">
             <v-text-field
                     outlined
                     dense
@@ -16,6 +16,22 @@
             <v-btn v-if="!loading" tile absolute style="right:40px;top:50px;padding:0 5px;min-width: auto;" small><v-icon>mdi-check</v-icon></v-btn>
             <v-btn v-if="!loading" @click="cancelEditing" tile absolute style="right:0px;top:50px;padding:0 5px;min-width: auto;" small><v-icon>mdi-close</v-icon></v-btn>
         </form>
+        <v-snackbar
+                v-model="showError"
+                color="error"
+                :timeout="6000"
+                right
+                top
+        >
+            {{ errorText }}
+            <v-btn
+                    dark
+                    text
+                    @click="showError = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </div>
 </template>
 
@@ -29,7 +45,9 @@
         data: () => ({
             newValue: '',
             editing: false,
-            loading: false
+            loading: false,
+            showError: false,
+            errorText: ''
         }),
         props: {
             value: {
@@ -80,7 +98,10 @@
                         this.$emit('success', response.data);
                         this.$emit('input', this.newValue);
                     }).catch((err) => {
-                        console.log(err);
+                        if(err.response.status === 400) {
+                            this.errorText = err.response.data.errors[0].errors[0];
+                            this.showError = true;
+                        }
                     }).then(() => {
                         this.editing = false;
                         this.loading = false;
