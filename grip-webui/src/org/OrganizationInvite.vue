@@ -1,36 +1,41 @@
 <template>
   <div>
-    <v-responsive class="mx-auto" style="max-width: 768px;">
-      <div class="text-center my-8 mb-12 mt-16">
+    <v-responsive class="mx-auto mb-16" style="max-width: 768px;">
+      <div class="text-center my-8 mt-16">
         <h2 class="text-h2 mb-10">Welcome to Grip</h2>
         <h4 class="text-h5">Woohoo! You've joined the thousands of teams who are doing their best work with GitHub. Now add your teammates to start collaborating—we can't wait to see what you build.</h4>
       </div>
-      <validation-observer v-slot="{ handleSubmit, debouncing, invalid }">
+      <div class="text-center">
+        <img src="../assets/invite-people-icon.png" style="width: 200px; height: 200px;" />
+      </div>
+      <p class="text-h6 mb-2">Add organization members</p>
+      <p class="text--secondary mb-2">Organization members will be able to view repositories, organize into teams, review code, and tag other members using @mentions.</p>
+      <p class="mb-8"><a href="#">Learn more about permissions for organizations <v-icon color="primary" small>mdi-open-in-new</v-icon></a></p>
+      <validation-observer v-slot="{ handleSubmit, invalid, debouncing }">
         <form @submit.prevent="handleSubmit(submit)">
-            <h3 class="mb-1">Organization account name <span class="red--text">*</span></h3>
-            <validation-provider v-slot="{ errors, debouncing, passed }" :debounce="1000" name="Project Name" rules="required|alpha_num_dash_space|org_url_available">
-              <v-text-field
+            <h3 class="mb-1">Add email addresses of team members</h3>
+            <validation-provider v-slot="{ errors, debouncing }" name="Project Name" rules="combo_box_emails">
+              <v-combobox
                   outlined
-                  dense
-                  v-model="name"
+                  :delimiters="[',']"
+                  deletable-chips
+                  chips
+                  multiple
+                  v-model="emails"
                   :error-messages="errors"
                   :loading="debouncing"
-                  :hint="!debouncing && passed && 'Your URL will be: ' + url"
-                  persistent-hint
-                  :append-icon="passed && !debouncing ? 'mdi-check success--text' : ''"
-                  autofocus
-              />
-            </validation-provider>
-            <h3 class="mb-2">Contact email <span class="red--text">*</span></h3>
-            <validation-provider :debounce="1000" v-slot="{ errors, passed, debouncing }" name="Email" rules="required|email">
-              <v-text-field
-                  outlined
-                  dense
-                  v-model="email"
-                  :loading="debouncing"
-                  :append-icon="passed ? 'mdi-check success--text' : ''"
-                  :error-messages="errors"
-              />
+                  :search-input.sync="search"
+              >
+                <template v-slot:no-data>
+                  <v-list-item v-if="search && emailValid(search)">
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        Press <kbd>enter</kbd> to invite <strong>{{ search }}</strong>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+              </v-combobox>
             </validation-provider>
 
           <form-error :error="errorMessage" />
@@ -44,15 +49,14 @@
               :disabled="invalid || debouncing"
               :loading="loading"
           >
-            Next
+            Invite
           </v-btn>
         </form>
       </validation-observer>
       <div class="text-caption text-center mt-5">
-        By creating an account, you agree to the <a href="#">Terms of Service</a>. For more information about Grips's privacy practices, see the <a href="#">Grip Privacy Statement</a>. We'll occasionally send you account-related emails.
+        <a href="#">Skip this step</a>
       </div>
     </v-responsive>
-    <v-footer absolute padless height="50"/>
   </div>
 </template>
 
@@ -66,12 +70,16 @@ export default {
     FormError
   },
   data: () => ({
-    name: '',
-    email: '',
+    emails: '',
+    search: null,
     errorMessage: '',
     loading: false
   }),
   methods: {
+    emailValid(email) {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
     submit() {
       this.loading = true;
       client.post('/org/create', {

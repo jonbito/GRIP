@@ -19,7 +19,7 @@
                   v-model="name"
                   :error-messages="errors"
                   :loading="debouncing"
-                  :hint="!debouncing && passed && 'Your URL will be: ' + url"
+                  :hint="!debouncing && passed ? ('Your URL will be: ' + url) : ''"
                   persistent-hint
                   :append-icon="passed && !debouncing ? 'mdi-check success--text' : ''"
                   autofocus

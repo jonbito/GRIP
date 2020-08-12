@@ -1,6 +1,10 @@
-CREATE TYPE role_type AS ENUM (
+CREATE TYPE project_role_type AS ENUM (
     'GUEST', 'REPORTER', 'DEVELOPER', 'MAINTAINER', 'OWNER'
 );
+
+CREATE TYPE org_role_type AS ENUM (
+    'GUEST', 'REPORTER', 'DEVELOPER', 'MAINTAINER', 'OWNER'
+    );
 
 CREATE TYPE upload_type AS ENUM (
     'USER_AVATAR', 'PROJECT_AVATAR', 'GROUP_AVATAR'
@@ -22,6 +26,14 @@ CREATE TABLE IF NOT EXISTS org (
     name varchar(128),
     email varchar(128),
     url varchar(128),
+    created_at timestamp,
+    updated_at timestamp
+);
+
+CREATE TABLE IF NOT EXISTS org_invite (
+    id UUID PRIMARY KEY,
+    user_account_id UUID NOT NULL,
+    role role_type NOT NULL,
     created_at timestamp,
     updated_at timestamp
 );

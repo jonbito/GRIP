@@ -78,6 +78,22 @@ extend('org_url_available', {
     message: 'The name \'{_value_}\' is already taken'
 })
 
+extend('combo_box_emails', {
+    validate: value => {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(!value.every((text) => re.test(text))) {
+            return {
+                valid: false
+            }
+        }
+
+        return {
+            valid: true
+        }
+    },
+    message: 'Invalid email'
+})
+
 extend('username_available', {
     validate: text => {
         return client.get('/account/usernameExists/' + text).then((response) => {
